@@ -383,12 +383,12 @@ kbd {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 18px;
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
   display: none;
   justify-content: space-between;
   align-items: flex-end;
   padding: 0 14px;
-  z-index: 4;
+  z-index: 12;
   pointer-events: none;
 }
 
@@ -448,12 +448,10 @@ kbd {
   }
 
   .mobile-controls {
+    position: fixed;
     display: flex;
-  }
-}
-
-@media (min-width: 721px) {
-  .mobile-controls {
-    display: none;
+    left: 0;
+    right: 0;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
   }
 }
