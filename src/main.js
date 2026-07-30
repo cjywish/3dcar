@@ -841,7 +841,7 @@ function stopMiniGame() {
 }
 
 function applyMiniGameScore(delta, message, tone) {
-  state.score += delta;
+  state.score = Math.max(0, state.score + delta);
   if (state.score > state.best) {
     state.best = state.score;
     localStorage.setItem('neon-ridge-best-score', Math.floor(state.best).toString());
@@ -1062,7 +1062,7 @@ function updateWorld(delta) {
   state.distance += state.speed * delta * 48;
   const speedRatio = THREE.MathUtils.clamp(state.speed / state.maxSpeed, 0.2, 1.25);
   const speedWeight = THREE.MathUtils.lerp(0.7, 1.45, speedRatio);
-  state.score += delta * state.speed * 110 * state.scoreMultiplier * speedWeight;
+  state.score = Math.max(0, state.score + delta * state.speed * 110 * state.scoreMultiplier * speedWeight);
   advanceRoadMode(delta);
   const roadAdvance = state.speed * delta * SCROLL_SPEED.road;
   trackProgress += roadAdvance;
