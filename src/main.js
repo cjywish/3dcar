@@ -8,6 +8,7 @@ const distanceEl = document.querySelector('#distance');
 const bestEl = document.querySelector('#best');
 const difficultyLabelEl = document.querySelector('#difficulty-label');
 const obstacleSpeedValueEl = document.querySelector('#obstacle-speed-value');
+const obstacleSpeedDeltaEl = document.querySelector('#obstacle-speed-delta');
 const obstacleSpeedDownBtn = document.querySelector('#obstacle-speed-down');
 const obstacleSpeedUpBtn = document.querySelector('#obstacle-speed-up');
 const difficultyButtons = document.querySelectorAll('[data-difficulty]');
@@ -749,6 +750,11 @@ function uploadCarPhoto(file) {
 
 function updateObstacleSpeedUI() {
   obstacleSpeedValueEl.textContent = state.obstacleSpeed.toFixed(0);
+  if (obstacleSpeedDeltaEl) {
+    const liveDelta = Math.round((state.targetSpeed - 0.35) * 100);
+    const prefix = liveDelta > 0 ? '+' : '';
+    obstacleSpeedDeltaEl.textContent = `(${prefix}${liveDelta})`;
+  }
 }
 
 function setObstacleSpeed(value, announce = false) {
