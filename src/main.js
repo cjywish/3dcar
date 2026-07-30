@@ -3,11 +3,13 @@ import './style.css';
 
 const canvas = document.querySelector('#game');
 const speedEl = document.querySelector('#speed');
+const scoreEl = document.querySelector('#score');
 const distanceEl = document.querySelector('#distance');
 const bestEl = document.querySelector('#best');
 const obstacleSpeedValueEl = document.querySelector('#obstacle-speed-value');
 const obstacleSpeedDownBtn = document.querySelector('#obstacle-speed-down');
 const obstacleSpeedUpBtn = document.querySelector('#obstacle-speed-up');
+const difficultyButtons = document.querySelectorAll('[data-difficulty]');
 const carPhotoInput = document.querySelector('#car-photo-input');
 const carPhotoUploadBtn = document.querySelector('#car-photo-upload');
 const carPhotoClearBtn = document.querySelector('#car-photo-clear');
@@ -25,6 +27,29 @@ const SCROLL_SPEED = {
   markers: 28,
   scenery: 24,
   obstacles: 22,
+};
+
+const DIFFICULTIES = {
+  beginner: {
+    label: 'Beginner',
+    obstacleSpeed: 18,
+    scoreMultiplier: 1.0,
+  },
+  intermediate: {
+    label: 'Intermediate',
+    obstacleSpeed: 26,
+    scoreMultiplier: 1.22,
+  },
+  advanced: {
+    label: 'Advanced',
+    obstacleSpeed: 34,
+    scoreMultiplier: 1.48,
+  },
+  pro: {
+    label: 'Pro',
+    obstacleSpeed: 44,
+    scoreMultiplier: 1.82,
+  },
 };
 
 const OBSTACLE_SPEED_STEP = 2;
@@ -46,6 +71,7 @@ let roadModePrevious = 'straight';
 let defaultCarPhotoTexture = null;
 let activeCarPhotoTexture = null;
 let mobileSteer = 0;
+let selectedDifficultyKey = 'beginner';
 const textureLoader = new THREE.TextureLoader();
 const musicState = {
   enabled: true,
@@ -368,13 +394,15 @@ const state = {
   speed: 0.35,
   targetSpeed: 0.35,
   maxSpeed: 1.55,
-  obstacleSpeed: SCROLL_SPEED.obstacles,
+  obstacleSpeed: DIFFICULTIES.beginner.obstacleSpeed,
   distance: 0,
-  best: Number(localStorage.getItem('neon-ridge-best') || 0),
+  score: 0,
+  best: Number(localStorage.getItem('neon-ridge-best-score') || localStorage.getItem('neon-ridge-best') || 0),
   lane: 0,
   laneTarget: 0,
   shake: 0,
   collisionGraceUntil: 0,
+  scoreMultiplier: DIFFICULTIES.beginner.scoreMultiplier,
 };
 
 bestEl.textContent = state.best.toFixed(0);
@@ -394,6 +422,11 @@ window.addEventListener('keyup', (event) => {
 restartBtn.addEventListener('click', resetRace);
 obstacleSpeedDownBtn.addEventListener('click', () => adjustObstacleSpeed(-OBSTACLE_SPEED_STEP));
 obstacleSpeedUpBtn.addEventListener('click', () => adjustObstacleSpeed(OBSTACLE_SPEED_STEP));
+difficultyButtons.forEach((button) => {
+  button.addEventListener('click', () => {
+    applyDifficultySelection(button.dataset.difficulty || 'beginner');
+  });
+});
 carPhotoUploadBtn.addEventListener('click', () => carPhotoInput.click());
 carPhotoClearBtn.addEventListener('click', clearUploadedCarPhoto);
 bindSteeringButton(mobileLeftBtn, -1);
@@ -414,6 +447,25 @@ carPhotoInput.addEventListener('change', () => {
 
 function laneToX(lane) {
   return lane * 3.2;
+}
+
+function applyDifficultySelection(key, syncObstacleSpeed = true) {
+  const nextKey = DIFFICULTIES[key] ? key : 'beginner';
+  const config = DIFFICULTIES[nextKey];
+
+  selectedDifficultyKey = nextKey;
+  state.scoreMultiplier = config.scoreMultiplier;
+
+  if (syncObstacleSpeed) {
+    state.obstacleSpeed = config.obstacleSpeed;
+    updateObstacleSpeedUI();
+  }
+
+  for (const button of difficultyButtons) {
+    const isActive = button.dataset.difficulty === nextKey;
+    button.classList.toggle('difficulty-btn--active', isActive);
+    button.setAttribute('aria-pressed', String(isActive));
+  }
 }
 
 function bindSteeringButton(button, direction) {
@@ -731,26 +783,31 @@ function hideStartScreen() {
 }
 
 function startGame() {
+  applyDifficultySelection(selectedDifficultyKey, true);
   state.running = true;
   state.speed = 0.95;
   state.targetSpeed = 1.15;
+  state.score = 0;
+  state.distance = 0;
   state.collisionGraceUntil = performance.now() + 1000;
   hideStartScreen();
   roadModeElapsed = 0;
   roadModeTransition = 1;
   startBackgroundMusic();
-  showBanner('Race on', 'The track is live. Steer with WASD or arrow keys.');
+  showBanner('Race on', `Difficulty: ${DIFFICULTIES[selectedDifficultyKey].label}. Steer with WASD or arrow keys.`);
 }
 
 window.startGame = startGame;
 window.resetRace = resetRace;
 
 function resetRace() {
+  applyDifficultySelection(selectedDifficultyKey, true);
   state.running = true;
   hideStartScreen();
   state.speed = 0.35;
   state.targetSpeed = 0.35;
   state.distance = 0;
+  state.score = 0;
   state.collisionGraceUntil = performance.now() + 1000;
   mobileSteer = 0;
   trackProgress = 0;
@@ -771,7 +828,7 @@ function resetRace() {
     obstacle.position.x = roadCenterAt(obstacle.position.z) + LANE_OFFSETS[obstacle.userData.laneIndex];
     obstacle.rotation.y = roadHeadingAt(obstacle.position.z);
   }
-  showBanner('Race reset', 'Stay centered and push for a new best distance.');
+  showBanner('Race reset', 'Stay centered and push for a new best score.');
 }
 
 function updateControls(delta) {
@@ -815,6 +872,9 @@ function updatePlayer(delta) {
 function updateWorld(delta) {
   state.speed += (state.targetSpeed - state.speed) * (1 - Math.pow(0.001, delta));
   state.distance += state.speed * delta * 48;
+  const speedRatio = THREE.MathUtils.clamp(state.speed / state.maxSpeed, 0.2, 1.25);
+  const speedWeight = THREE.MathUtils.lerp(0.7, 1.45, speedRatio);
+  state.score += delta * state.speed * 110 * state.scoreMultiplier * speedWeight;
   advanceRoadMode(delta);
   const roadAdvance = state.speed * delta * SCROLL_SPEED.road;
   trackProgress += roadAdvance;
@@ -891,8 +951,11 @@ function updateCollisions() {
       state.targetSpeed = 0;
       state.shake = 1.5;
       playCrashSound();
-      bestEl.textContent = Math.max(state.best, state.distance).toFixed(0);
-      localStorage.setItem('neon-ridge-best', Math.max(state.best, state.distance).toFixed(0));
+      const bestScore = Math.max(state.best, state.score);
+      state.best = bestScore;
+      bestEl.textContent = bestScore.toFixed(0);
+      localStorage.setItem('neon-ridge-best-score', bestScore.toFixed(0));
+      localStorage.setItem('neon-ridge-best', bestScore.toFixed(0));
       showBanner('Crash!', 'Press Restart Race or R to try again.');
       return;
     }
@@ -901,8 +964,9 @@ function updateCollisions() {
 
 function updateHUD() {
   speedEl.textContent = Math.round(state.speed * 100);
+  scoreEl.textContent = Math.floor(state.score).toString();
   distanceEl.textContent = Math.floor(state.distance).toString();
-  const best = Math.max(state.best, state.distance);
+  const best = Math.max(state.best, state.score);
   bestEl.textContent = Math.floor(best).toString();
 }
 
@@ -942,6 +1006,7 @@ window.addEventListener('resize', () => {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 });
 
+applyDifficultySelection(selectedDifficultyKey, true);
 updateObstacleSpeedUI();
 updateMusicButton();
 showBanner('Ready', 'Press Start Game to begin racing.');

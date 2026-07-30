@@ -8,8 +8,8 @@
       name="description"
       content="A fast Three.js racing game with arcade controls, obstacles, and score tracking."
     />
-    <script type="module" crossorigin src="/assets/index-Dl8rjrQr.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-TCFToBxx.css">
+    <script type="module" crossorigin src="/assets/index-C-h0DInc.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DNZeycwQ.css">
   </head>
   <body>
     <div id="app">
@@ -18,7 +18,25 @@
         <div class="start-screen__panel">
           <span class="hud__eyebrow">Ready to Race</span>
           <h2>Neon Ridge Racer</h2>
-          <p>Start the game, then steer around obstacles and upload a photo onto your car.</p>
+          <p>Select a difficulty first, then start racing and upload a photo onto your car.</p>
+          <div class="difficulty-select" aria-label="Select difficulty">
+            <button class="difficulty-btn difficulty-btn--active" type="button" data-difficulty="beginner">
+              <strong>Beginner</strong>
+              <span>Obstacle speed 18</span>
+            </button>
+            <button class="difficulty-btn" type="button" data-difficulty="intermediate">
+              <strong>Intermediate</strong>
+              <span>Obstacle speed 26</span>
+            </button>
+            <button class="difficulty-btn" type="button" data-difficulty="advanced">
+              <strong>Advanced</strong>
+              <span>Obstacle speed 34</span>
+            </button>
+            <button class="difficulty-btn" type="button" data-difficulty="pro">
+              <strong>Pro</strong>
+              <span>Obstacle speed 44</span>
+            </button>
+          </div>
           <button id="start-game" type="button">Start Game</button>
         </div>
       </div>
@@ -29,8 +47,9 @@
         </div>
         <div class="hud__stats">
           <div><span>Speed</span><strong id="speed">0</strong></div>
+          <div><span>Score</span><strong id="score">0</strong></div>
           <div><span>Distance</span><strong id="distance">0</strong></div>
-          <div><span>Best</span><strong id="best">0</strong></div>
+          <div><span>Best Score</span><strong id="best">0</strong></div>
         </div>
         <div class="hud__help">
           <p>Move: <kbd>WASD</kbd> or <kbd>Arrow Keys</kbd></p>
