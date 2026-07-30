@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>real 3D car 사용자 매뉴얼</title>
+    <style>
+      @page {
+        size: A4;
+        margin: 18mm 16mm;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        color: #172033;
+        background: #ffffff;
+        font-family: "Malgun Gothic", "Noto Sans KR", sans-serif;
+        font-size: 10.5pt;
+        line-height: 1.62;
+      }
+
+      h1,
+      h2,
+      h3 {
+        margin: 0;
+        color: #0b1220;
+        line-height: 1.25;
+      }
+
+      h1 {
+        font-size: 28pt;
+        letter-spacing: 0;
+      }
+
+      h2 {
+        margin-top: 24px;
+        padding-bottom: 6px;
+        border-bottom: 2px solid #d7e3f1;
+        font-size: 16pt;
+      }
+
+      h3 {
+        margin-top: 16px;
+        font-size: 12pt;
+      }
+
+      p {
+        margin: 7px 0;
+      }
+
+      ul,
+      ol {
+        margin: 7px 0 7px 20px;
+        padding: 0;
+      }
+
+      li {
+        margin: 3px 0;
+      }
+
+      table {
+        width: 100%;
+        margin: 10px 0 14px;
+        border-collapse: collapse;
+        table-layout: fixed;
+      }
+
+      th,
+      td {
+        padding: 8px 9px;
+        border: 1px solid #cbd8e6;
+        vertical-align: top;
+        word-break: keep-all;
+      }
+
+      th {
+        color: #0b1220;
+        background: #eef5fc;
+        font-weight: 700;
+      }
+
+      code,
+      kbd {
+        padding: 1px 5px;
+        border: 1px solid #cbd8e6;
+        border-radius: 4px;
+        background: #f4f7fb;
+        font-family: "Consolas", monospace;
+        font-size: 9pt;
+      }
+
+      .cover {
+        padding: 32px 28px;
+        border: 2px solid #1f6feb;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #eef7ff, #fff7e7);
+      }
+
+      .subtitle {
+        margin-top: 10px;
+        color: #42526a;
+        font-size: 13pt;
+      }
+
+      .meta {
+        margin-top: 24px;
+        color: #526173;
+      }
+
+      .note {
+        margin: 12px 0;
+        padding: 10px 12px;
+        border-left: 4px solid #1f6feb;
+        background: #f5f9ff;
+      }
+
+      .warning {
+        border-left-color: #f59e0b;
+        background: #fff8eb;
+      }
+
+      .page-break {
+        break-before: page;
+      }
+    </style>
+  </head>
+  <body>
+    <section class="cover">
+      <h1>real 3D car 사용자 매뉴얼</h1>
+      <p class="subtitle">Three.js 기반 3D 레이싱 게임 플레이 가이드</p>
+      <p class="meta">
+        웹 기반 게임 접속 주소: <strong>https://real-3dcar.streamlit.app</strong><br />
+        문서 버전: 1.0<br />
+        작성일: 2026-07-31
+      </p>
+    </section>
+
+    <h2>1. 게임 개요</h2>
+    <p>
+      <strong>real 3D car</strong>는 도로 위 장애물을 피하며 점수를 쌓는 3D 레이싱 게임입니다.
+      플레이어는 난이도를 선택하고, 차량을 좌우로 조작하며, 직선 구간에서 등장하는 구구단 미니게임으로
+      추가 점수를 획득할 수 있습니다.
+    </p>
+
+    <h2>2. 실행 방법</h2>
+    <ol>
+      <li>프로젝트 폴더로 이동합니다: <code>C:\work\AI\LLM\codex\3dCar</code></li>
+      <li>개발 서버 실행: <code>npm run dev</code></li>
+      <li>브라우저에서 Vite가 안내하는 주소를 엽니다. 일반적으로 <code>http://localhost:5173</code>입니다.</li>
+      <li>배포용 빌드 확인은 <code>npm run build</code>로 실행합니다.</li>
+    </ol>
+
+    <h2>3. 시작 화면</h2>
+    <p>게임 시작 전 난이도를 선택한 뒤 <strong>Start Game</strong> 버튼을 누르면 레이스가 시작됩니다.</p>
+    <table>
+      <thead>
+        <tr>
+          <th>표시</th>
+          <th>의미</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>S</code></td>
+          <td>직선 구간 지속 시간</td>
+        </tr>
+        <tr>
+          <td><code>C</code></td>
+          <td>곡선 구간 지속 시간</td>
+        </tr>
+        <tr>
+          <td><code>M</code></td>
+          <td>미니게임 박스가 화면에 표시되는 시간</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>4. 난이도 설정</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>난이도</th>
+          <th>장애물 속도</th>
+          <th>직선</th>
+          <th>곡선</th>
+          <th>미니게임 표시</th>
+          <th>점수 가중치</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Beginner</td>
+          <td>18</td>
+          <td>20초</td>
+          <td>5초</td>
+          <td>5초</td>
+          <td>1.00배</td>
+        </tr>
+        <tr>
+          <td>Intermediate</td>
+          <td>26</td>
+          <td>20초</td>
+          <td>10초</td>
+          <td>10초</td>
+          <td>1.22배</td>
+        </tr>
+        <tr>
+          <td>Advanced</td>
+          <td>34</td>
+          <td>10초</td>
+          <td>10초</td>
+          <td>10초</td>
+          <td>1.48배</td>
+        </tr>
+        <tr>
+          <td>Pro</td>
+          <td>44</td>
+          <td>5초</td>
+          <td>20초</td>
+          <td>5초</td>
+          <td>1.82배</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>5. 기본 조작법</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>동작</th>
+          <th>키보드</th>
+          <th>모바일</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>왼쪽 이동</td>
+          <td><kbd>A</kbd> 또는 <kbd>←</kbd></td>
+          <td>왼쪽 하단 <strong>LEFT</strong> 버튼</td>
+        </tr>
+        <tr>
+          <td>오른쪽 이동</td>
+          <td><kbd>D</kbd> 또는 <kbd>→</kbd></td>
+          <td>오른쪽 하단 <strong>RIGHT</strong> 버튼</td>
+        </tr>
+        <tr>
+          <td>가속</td>
+          <td><kbd>W</kbd> 또는 <kbd>↑</kbd></td>
+          <td>키보드 사용 권장</td>
+        </tr>
+        <tr>
+          <td>감속</td>
+          <td><kbd>S</kbd> 또는 <kbd>↓</kbd></td>
+          <td>키보드 사용 권장</td>
+        </tr>
+        <tr>
+          <td>재시작</td>
+          <td><kbd>R</kbd></td>
+          <td><strong>Restart Race</strong> 버튼</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>6. 왼쪽 정보 박스</h2>
+    <p>게임 중 왼쪽 상단 정보 박스에서 현재 주행 상태를 확인할 수 있습니다.</p>
+    <ul>
+      <li><strong>Speed</strong>: 현재 차량 속도</li>
+      <li><strong>Score</strong>: 현재 점수</li>
+      <li><strong>Distance</strong>: 주행 거리</li>
+      <li><strong>Best Score</strong>: 최고 점수</li>
+      <li><strong>Difficulty</strong>: 현재 선택된 난이도</li>
+      <li><strong>Obstacle Speed</strong>: 장애물 기본 속도와 주행 입력에 따른 변화량</li>
+    </ul>
+
+    <h2 class="page-break">7. 점수 규칙</h2>
+    <ul>
+      <li>기본 점수는 주행 시간, 주행 속도, 난이도 가중치에 따라 계속 증가합니다.</li>
+      <li>빠른 속도로 운행할수록 더 높은 속도 가중치가 적용됩니다.</li>
+      <li>난이도가 높을수록 더 높은 점수 배수가 적용됩니다.</li>
+      <li>미니게임 정답 시 <strong>+300점</strong>이 추가됩니다.</li>
+      <li>미니게임 오답 또는 시간 초과 시 <strong>-300점</strong>이 감산됩니다.</li>
+      <li>점수는 0점보다 낮아지지 않습니다.</li>
+    </ul>
+
+    <h2>8. 구구단 미니게임</h2>
+    <p>
+      직선 구간에서 오른쪽에 구구단 미니게임 박스가 표시됩니다. 문제마다 정답 입력 대기시간은
+      <strong>3초</strong>입니다.
+    </p>
+    <ul>
+      <li>초보자와 중급자는 직선 구간 시작 후 5초 뒤 미니게임이 표시됩니다.</li>
+      <li>고급자와 프로는 직선 구간 시작과 동시에 미니게임이 표시됩니다.</li>
+      <li>미니게임이 시작될 때 빰빠라 효과음이 재생됩니다.</li>
+      <li>정답이면 <strong>좋아!</strong> 팝업과 경쾌한 효과음이 재생됩니다.</li>
+      <li>오답 또는 시간 초과면 <strong>안좋아!</strong> 팝업과 짧은 낮은 효과음이 재생됩니다.</li>
+    </ul>
+    <div class="note">
+      미니게임 표시 시간은 난이도별 <code>M</code> 값입니다. 입력 대기시간 3초와는 별도로 동작합니다.
+    </div>
+
+    <h2>9. 충돌과 재시작</h2>
+    <p>
+      장애물과 충돌하면 게임이 멈추고 충돌 화면이 나타납니다. 이 화면에서 난이도를 다시 선택한 뒤
+      <strong>Restart Race</strong>를 누르면 새 레이스가 시작됩니다.
+    </p>
+    <ul>
+      <li>충돌 후 재시작 시 미니게임의 이전 문제나 남은 시간은 이어지지 않습니다.</li>
+      <li>선택한 난이도는 왼쪽 정보 박스에 즉시 반영됩니다.</li>
+      <li>최고 점수는 브라우저 로컬 저장소에 저장됩니다.</li>
+    </ul>
+
+    <h2>10. 차량 사진 업로드</h2>
+    <p>
+      왼쪽 정보 박스의 <strong>Upload Photo</strong> 버튼으로 이미지를 선택하면 차량 지붕에 사진이 표시됩니다.
+      <strong>Clear</strong> 버튼을 누르면 기본 이미지로 되돌릴 수 있습니다.
+    </p>
+
+    <h2>11. 음악과 효과음</h2>
+    <ul>
+      <li><strong>BGM On/Off</strong> 버튼으로 배경음악을 켜거나 끌 수 있습니다.</li>
+      <li>충돌 시 충돌 효과음이 재생됩니다.</li>
+      <li>미니게임 시작, 정답, 오답 상황에 각각 효과음이 재생됩니다.</li>
+    </ul>
+
+    <h2>12. 문제 해결</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>증상</th>
+          <th>확인 방법</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>게임 화면이 보이지 않음</td>
+          <td>개발 서버가 실행 중인지 확인하고 브라우저 새로고침을 합니다.</td>
+        </tr>
+        <tr>
+          <td>모바일 좌우 버튼이 보이지 않음</td>
+          <td>브라우저 캐시를 비우고 화면 폭이 모바일 크기인지 확인합니다.</td>
+        </tr>
+        <tr>
+          <td>효과음이 들리지 않음</td>
+          <td>브라우저 탭 음소거, OS 볼륨, 첫 사용자 클릭 이후 재생 여부를 확인합니다.</td>
+        </tr>
+        <tr>
+          <td>미니게임이 나타나지 않음</td>
+          <td>현재 도로가 직선 구간인지 확인합니다. 초보자/중급자는 직선 시작 후 5초 뒤 표시됩니다.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="note warning">
+      이 매뉴얼은 현재 로컬 프로젝트 <code>C:\work\AI\LLM\codex\3dCar</code> 기준으로 작성되었습니다.
+    </div>
+  </body>
+</html>
