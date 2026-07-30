@@ -11,6 +11,7 @@ const obstacleSpeedValueEl = document.querySelector('#obstacle-speed-value');
 const obstacleSpeedDeltaEl = document.querySelector('#obstacle-speed-delta');
 const obstacleSpeedDownBtn = document.querySelector('#obstacle-speed-down');
 const obstacleSpeedUpBtn = document.querySelector('#obstacle-speed-up');
+const languageButtons = document.querySelectorAll('[data-language]');
 const difficultyButtons = document.querySelectorAll('[data-difficulty]');
 const carPhotoInput = document.querySelector('#car-photo-input');
 const carPhotoUploadBtn = document.querySelector('#car-photo-upload');
@@ -43,7 +44,7 @@ const SCROLL_SPEED = {
 
 const DIFFICULTIES = {
   beginner: {
-    label: 'Beginner',
+    labels: { ko: '초보자', en: 'Beginner' },
     obstacleSpeed: 18,
     scoreMultiplier: 1.0,
     straightSeconds: 20,
@@ -51,7 +52,7 @@ const DIFFICULTIES = {
     miniGameSeconds: 5,
   },
   intermediate: {
-    label: 'Intermediate',
+    labels: { ko: '중급자', en: 'Intermediate' },
     obstacleSpeed: 26,
     scoreMultiplier: 1.22,
     straightSeconds: 20,
@@ -59,7 +60,7 @@ const DIFFICULTIES = {
     miniGameSeconds: 10,
   },
   advanced: {
-    label: 'Advanced',
+    labels: { ko: '고급자', en: 'Advanced' },
     obstacleSpeed: 34,
     scoreMultiplier: 1.48,
     straightSeconds: 10,
@@ -67,12 +68,139 @@ const DIFFICULTIES = {
     miniGameSeconds: 10,
   },
   pro: {
-    label: 'Pro',
+    labels: { ko: '프로', en: 'Pro' },
     obstacleSpeed: 44,
     scoreMultiplier: 1.82,
     straightSeconds: 5,
     curveSeconds: 20,
     miniGameSeconds: 5,
+  },
+};
+
+const TRANSLATIONS = {
+  ko: {
+    startEyebrow: '레이스 준비',
+    startDescription: '난이도와 언어를 선택한 뒤 레이스를 시작하세요.',
+    startGame: '게임 시작',
+    hudEyebrow: 'Three.js 아케이드',
+    speed: '속도',
+    score: '점수',
+    distance: '거리',
+    bestScore: '최고 점수',
+    move: '이동',
+    or: '또는',
+    arrowKeys: '방향키',
+    restartKey: '재시작',
+    difficulty: '난이도',
+    obstacleSpeed: '장애물 속도',
+    carPhoto: '차량 사진',
+    uploadPhoto: '사진 올리기',
+    clear: '삭제',
+    backgroundMusic: '배경 음악',
+    bgmOn: 'BGM 켜짐',
+    bgmOff: 'BGM 꺼짐',
+    restartRace: '레이스 재시작',
+    miniGame: '미니게임',
+    multiplication: '구구단',
+    answerPlaceholder: '정답 입력',
+    confirm: '확인',
+    timeLeft: '남은 시간',
+    enterAnswer: '정답을 입력하세요.',
+    ready: '준비',
+    readyMessage: '게임 시작을 눌러 레이스를 시작하세요.',
+    crashDetected: '충돌 발생',
+    chooseDifficulty: '새 난이도 선택',
+    crashDescription: '난이도를 바꾼 뒤 레이스를 다시 시작할 수 있습니다.',
+    left: '왼쪽',
+    right: '오른쪽',
+    musicOnTitle: '음악 켜짐',
+    musicOnMessage: '배경 음악이 켜졌습니다.',
+    musicOffTitle: '음악 꺼짐',
+    musicOffMessage: '배경 음악이 꺼졌습니다.',
+    carPhotoTitle: '차량 사진',
+    carPhotoReset: '기본 이미지로 되돌렸습니다.',
+    carPhotoUploaded: '차량 지붕에 사진을 올렸습니다.',
+    uploadFailedTitle: '업로드 실패',
+    uploadFailedMessage: '올바른 이미지 파일을 선택하세요.',
+    obstacleSpeedTitle: '장애물 속도',
+    obstacleSpeedSet: '설정값',
+    roadModeTitle: '도로 구간',
+    straightAhead: '직선 구간입니다.',
+    curveAhead: '곡선 구간입니다.',
+    raceOn: '레이스 시작',
+    raceOnMessage: '난이도',
+    raceReset: '레이스 재시작',
+    raceResetMessage: '중앙을 유지하며 최고 점수에 도전하세요.',
+    crashTitle: '충돌!',
+    crashMessage: '레이스 재시작 버튼 또는 R 키를 누르세요.',
+    numberRequired: '숫자를 입력하세요.',
+    correctScore: '정답! +300점',
+    wrongScore: '오답! 정답은 {answer}입니다. -300점',
+    timeoutScore: '시간 초과! 정답은 {answer}입니다. -300점',
+    good: '좋아!',
+    bad: '안좋아!',
+  },
+  en: {
+    startEyebrow: 'Ready to Race',
+    startDescription: 'Select a language and difficulty first, then start racing.',
+    startGame: 'Start Game',
+    hudEyebrow: 'Three.js Arcade',
+    speed: 'Speed',
+    score: 'Score',
+    distance: 'Distance',
+    bestScore: 'Best Score',
+    move: 'Move',
+    or: 'or',
+    arrowKeys: 'Arrow Keys',
+    restartKey: 'Restart',
+    difficulty: 'Difficulty',
+    obstacleSpeed: 'Obstacle Speed',
+    carPhoto: 'Car Photo',
+    uploadPhoto: 'Upload Photo',
+    clear: 'Clear',
+    backgroundMusic: 'Background Music',
+    bgmOn: 'BGM On',
+    bgmOff: 'BGM Off',
+    restartRace: 'Restart Race',
+    miniGame: 'Mini Game',
+    multiplication: 'Multiplication',
+    answerPlaceholder: 'Enter answer',
+    confirm: 'OK',
+    timeLeft: 'Time Left',
+    enterAnswer: 'Enter the answer.',
+    ready: 'Ready',
+    readyMessage: 'Press Start Game to begin racing.',
+    crashDetected: 'Crash detected',
+    chooseDifficulty: 'Choose a new difficulty',
+    crashDescription: 'You can change difficulty here and then restart the race.',
+    left: 'LEFT',
+    right: 'RIGHT',
+    musicOnTitle: 'Music on',
+    musicOnMessage: 'Background music enabled.',
+    musicOffTitle: 'Music off',
+    musicOffMessage: 'Background music muted.',
+    carPhotoTitle: 'Car photo',
+    carPhotoReset: 'Reset to the default placeholder.',
+    carPhotoUploaded: 'Uploaded to the roof.',
+    uploadFailedTitle: 'Upload failed',
+    uploadFailedMessage: 'Please choose a valid image file.',
+    obstacleSpeedTitle: 'Obstacle speed',
+    obstacleSpeedSet: 'Set to',
+    roadModeTitle: 'Road mode',
+    straightAhead: 'Straight stretch ahead.',
+    curveAhead: 'Curved section ahead.',
+    raceOn: 'Race on',
+    raceOnMessage: 'Difficulty',
+    raceReset: 'Race reset',
+    raceResetMessage: 'Stay centered and push for a new best score.',
+    crashTitle: 'Crash!',
+    crashMessage: 'Press Restart Race or R to try again.',
+    numberRequired: 'Enter a number.',
+    correctScore: 'Correct! +300 points',
+    wrongScore: 'Wrong! Answer: {answer}. -300 points',
+    timeoutScore: 'Time out! Answer: {answer}. -300 points',
+    good: 'Nice!',
+    bad: 'Not good!',
   },
 };
 
@@ -95,6 +223,7 @@ let roadModePrevious = 'straight';
 let defaultCarPhotoTexture = null;
 let activeCarPhotoTexture = null;
 let mobileSteer = 0;
+let currentLanguage = localStorage.getItem('real-3d-car-language') || 'ko';
 let selectedDifficultyKey = 'beginner';
 let miniGameNextQuestionAt = 0;
 let miniGameQuestionStartedAt = 0;
@@ -455,6 +584,11 @@ restartBtn.addEventListener('click', resetRace);
 crashRestartBtn.addEventListener('click', resetRace);
 obstacleSpeedDownBtn.addEventListener('click', () => adjustObstacleSpeed(-OBSTACLE_SPEED_STEP));
 obstacleSpeedUpBtn.addEventListener('click', () => adjustObstacleSpeed(OBSTACLE_SPEED_STEP));
+languageButtons.forEach((button) => {
+  button.addEventListener('click', () => {
+    applyLanguage(button.dataset.language || 'ko');
+  });
+});
 difficultyButtons.forEach((button) => {
   button.addEventListener('click', () => {
     applyDifficultySelection(button.dataset.difficulty || 'beginner');
@@ -481,6 +615,17 @@ carPhotoInput.addEventListener('change', () => {
 
 function laneToX(lane) {
   return lane * 3.2;
+}
+
+function t(key, values = {}) {
+  const dictionary = TRANSLATIONS[currentLanguage] || TRANSLATIONS.ko;
+  const fallback = TRANSLATIONS.en[key] || key;
+  return (dictionary[key] || fallback).replace(/\{(\w+)\}/g, (_, name) => values[name] ?? '');
+}
+
+function getDifficultyLabel(key = selectedDifficultyKey) {
+  const config = DIFFICULTIES[key] || DIFFICULTIES.beginner;
+  return config.labels[currentLanguage] || config.labels.en;
 }
 
 function getSelectedDifficulty() {
@@ -511,7 +656,7 @@ function applyDifficultySelection(key, syncObstacleSpeed = true) {
   selectedDifficultyKey = nextKey;
   state.scoreMultiplier = config.scoreMultiplier;
   if (difficultyLabelEl) {
-    difficultyLabelEl.textContent = config.label;
+    difficultyLabelEl.textContent = getDifficultyLabel(nextKey);
   }
 
   if (syncObstacleSpeed) {
@@ -523,6 +668,31 @@ function applyDifficultySelection(key, syncObstacleSpeed = true) {
     button.classList.toggle('difficulty-btn--active', isActive);
     button.setAttribute('aria-pressed', String(isActive));
   }
+}
+
+function applyLanguage(language) {
+  currentLanguage = TRANSLATIONS[language] ? language : 'ko';
+  localStorage.setItem('real-3d-car-language', currentLanguage);
+  document.documentElement.lang = currentLanguage;
+
+  document.querySelectorAll('[data-i18n]').forEach((element) => {
+    element.textContent = t(element.dataset.i18n);
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach((element) => {
+    element.placeholder = t(element.dataset.i18nPlaceholder);
+  });
+  document.querySelectorAll('[data-difficulty-name]').forEach((element) => {
+    element.textContent = getDifficultyLabel(element.dataset.difficultyName);
+  });
+
+  languageButtons.forEach((button) => {
+    const isActive = button.dataset.language === currentLanguage;
+    button.classList.toggle('language-btn--active', isActive);
+    button.setAttribute('aria-pressed', String(isActive));
+  });
+
+  applyDifficultySelection(selectedDifficultyKey, false);
+  updateMusicButton();
 }
 
 function bindSteeringButton(button, direction) {
@@ -554,7 +724,7 @@ function showBanner(title, message) {
 }
 
 function updateMusicButton() {
-  musicToggleBtn.textContent = musicState.enabled ? 'BGM On' : 'BGM Off';
+  musicToggleBtn.textContent = musicState.enabled ? t('bgmOn') : t('bgmOff');
   musicToggleBtn.setAttribute('aria-pressed', String(musicState.enabled));
 }
 
@@ -784,10 +954,10 @@ function toggleBackgroundMusic() {
     if (state.running) {
       startBackgroundMusic();
     }
-    showBanner('Music on', 'Background music enabled.');
+    showBanner(t('musicOnTitle'), t('musicOnMessage'));
   } else {
     stopBackgroundMusic();
-    showBanner('Music off', 'Background music muted.');
+    showBanner(t('musicOffTitle'), t('musicOffMessage'));
   }
 }
 
@@ -853,7 +1023,7 @@ function clearUploadedCarPhoto() {
     activeCarPhotoTexture = null;
   }
   setCarRoofPhoto(getDefaultCarPhotoTexture());
-  showBanner('Car photo', 'Reset to the default placeholder.');
+  showBanner(t('carPhotoTitle'), t('carPhotoReset'));
 }
 
 function uploadCarPhoto(file) {
@@ -872,13 +1042,13 @@ function uploadCarPhoto(file) {
       }
       activeCarPhotoTexture = texture;
       setCarRoofPhoto(texture);
-      showBanner('Car photo', 'Uploaded to the roof.');
+      showBanner(t('carPhotoTitle'), t('carPhotoUploaded'));
       URL.revokeObjectURL(objectUrl);
     },
     undefined,
     () => {
       URL.revokeObjectURL(objectUrl);
-      showBanner('Upload failed', 'Please choose a valid image file.');
+      showBanner(t('uploadFailedTitle'), t('uploadFailedMessage'));
     },
   );
 }
@@ -896,7 +1066,7 @@ function setObstacleSpeed(value, announce = false) {
   state.obstacleSpeed = THREE.MathUtils.clamp(value, OBSTACLE_SPEED_MIN, OBSTACLE_SPEED_MAX);
   updateObstacleSpeedUI();
   if (announce) {
-    showBanner('Obstacle speed', `Set to ${state.obstacleSpeed.toFixed(0)}.`);
+    showBanner(t('obstacleSpeedTitle'), `${t('obstacleSpeedSet')} ${state.obstacleSpeed.toFixed(0)}.`);
   }
 }
 
@@ -960,7 +1130,7 @@ function renderMiniGameQuestion() {
     miniGameTimerEl.textContent = `${(answerMs / 1000).toFixed(1)}s`;
   }
   miniGameAnswerEl.focus({ preventScroll: true });
-  setMiniGameFeedback('정답을 입력하세요.', 'neutral');
+  setMiniGameFeedback(t('enterAnswer'), 'neutral');
 }
 
 function startMiniGame() {
@@ -1029,7 +1199,7 @@ function submitMiniGameAnswer(event) {
 
   const answer = Number.parseInt(miniGameAnswerEl.value, 10);
   if (!Number.isFinite(answer)) {
-    setMiniGameFeedback('숫자를 입력하세요.', 'warn');
+    setMiniGameFeedback(t('numberRequired'), 'warn');
     return;
   }
 
@@ -1038,12 +1208,12 @@ function submitMiniGameAnswer(event) {
   miniGameSubmitBtn.disabled = true;
 
   if (answer === miniGameQuestion.answer) {
-    applyMiniGameScore(300, '정답! +300점', 'correct');
-    showMiniGamePopup('좋아!', 'correct');
+    applyMiniGameScore(300, t('correctScore'), 'correct');
+    showMiniGamePopup(t('good'), 'correct');
     playMiniGameCorrectSound();
   } else {
-    applyMiniGameScore(-300, `오답! 정답은 ${miniGameQuestion.answer}입니다. -300점`, 'wrong');
-    showMiniGamePopup('안좋아!', 'wrong');
+    applyMiniGameScore(-300, t('wrongScore', { answer: miniGameQuestion.answer }), 'wrong');
+    showMiniGamePopup(t('bad'), 'wrong');
     playMiniGameWrongSound();
   }
 }
@@ -1059,7 +1229,7 @@ function setRoadMode(mode, announce = false) {
     miniGameShownInCurrentStraight = false;
   }
   if (announce) {
-    showBanner('Road mode', mode === 'straight' ? 'Straight stretch ahead.' : 'Curved section ahead.');
+    showBanner(t('roadModeTitle'), mode === 'straight' ? t('straightAhead') : t('curveAhead'));
   }
 }
 
@@ -1117,7 +1287,7 @@ function startGame() {
   roadModePrevious = 'straight';
   scheduleMiniGameForStraight();
   startBackgroundMusic();
-  showBanner('Race on', `Difficulty: ${DIFFICULTIES[selectedDifficultyKey].label}. Steer with WASD or arrow keys.`);
+  showBanner(t('raceOn'), `${t('raceOnMessage')}: ${getDifficultyLabel(selectedDifficultyKey)}.`);
 }
 
 window.startGame = startGame;
@@ -1153,7 +1323,7 @@ function resetRace() {
     obstacle.position.x = roadCenterAt(obstacle.position.z) + LANE_OFFSETS[obstacle.userData.laneIndex];
     obstacle.rotation.y = roadHeadingAt(obstacle.position.z);
   }
-  showBanner('Race reset', 'Stay centered and push for a new best score.');
+  showBanner(t('raceReset'), t('raceResetMessage'));
 }
 
 function updateMiniGame() {
@@ -1193,8 +1363,8 @@ function updateMiniGame() {
     miniGameQuestionResolved = true;
     miniGameAnswerEl.disabled = true;
     miniGameSubmitBtn.disabled = true;
-    applyMiniGameScore(-300, `시간 초과! 정답은 ${miniGameQuestion.answer}입니다. -300점`, 'wrong');
-    showMiniGamePopup('안좋아!', 'wrong');
+    applyMiniGameScore(-300, t('timeoutScore', { answer: miniGameQuestion.answer }), 'wrong');
+    showMiniGamePopup(t('bad'), 'wrong');
     playMiniGameWrongSound();
   }
 
@@ -1330,7 +1500,7 @@ function updateCollisions() {
       bestEl.textContent = bestScore.toFixed(0);
       localStorage.setItem('neon-ridge-best-score', bestScore.toFixed(0));
       localStorage.setItem('neon-ridge-best', bestScore.toFixed(0));
-      showBanner('Crash!', 'Press Restart Race or R to try again.');
+      showBanner(t('crashTitle'), t('crashMessage'));
       showCrashScreen();
       return;
     }
@@ -1388,8 +1558,9 @@ window.addEventListener('resize', () => {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 });
 
+applyLanguage(currentLanguage);
 applyDifficultySelection(selectedDifficultyKey, true);
 updateObstacleSpeedUI();
 updateMusicButton();
-showBanner('Ready', 'Press Start Game to begin racing.');
+showBanner(t('ready'), t('readyMessage'));
 animate();
