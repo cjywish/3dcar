@@ -576,6 +576,42 @@ body::before {
   color: #ffd166;
 }
 
+.mini-game-popup {
+  position: absolute;
+  left: 50%;
+  top: 32%;
+  z-index: 7;
+  min-width: 120px;
+  padding: 14px 18px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(8, 14, 24, 0.9);
+  color: var(--text);
+  font-size: 1.3rem;
+  font-weight: 900;
+  text-align: center;
+  box-shadow: var(--shadow);
+  opacity: 0;
+  transform: translate(-50%, -10px) scale(0.9);
+  transition: opacity 0.16s ease, transform 0.16s ease;
+  pointer-events: none;
+}
+
+.mini-game-popup--visible {
+  opacity: 1;
+  transform: translate(-50%, 0) scale(1);
+}
+
+.mini-game-popup[data-tone="correct"] {
+  color: #7cffb2;
+  border-color: rgba(124, 255, 178, 0.42);
+}
+
+.mini-game-popup[data-tone="wrong"] {
+  color: #ff8f8f;
+  border-color: rgba(255, 143, 143, 0.42);
+}
+
 kbd {
   padding: 0.15rem 0.45rem;
   border-radius: 8px;

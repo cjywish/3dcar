@@ -29,6 +29,7 @@ const miniGameAnswerEl = document.querySelector('#mini-game-answer');
 const miniGameSubmitBtn = document.querySelector('#mini-game-submit');
 const miniGameTimerEl = document.querySelector('#mini-game-timer');
 const miniGameFeedbackEl = document.querySelector('#mini-game-feedback');
+const miniGamePopupEl = document.querySelector('#mini-game-popup');
 const bannerEl = document.querySelector('#banner');
 const restartBtn = document.querySelector('#restart');
 
@@ -74,6 +75,7 @@ const ROAD_MODE_DURATION = 10;
 const ROAD_MODE_TRANSITION = 1.2;
 const ROAD_CURVE_AMPLITUDE = 3.1;
 const ROAD_CURVE_WAVE = 0.14;
+const MINI_GAME_ANSWER_MS = 3000;
 let trackProgress = 0;
 let roadModeElapsed = 0;
 let roadModeTransition = 1;
@@ -629,6 +631,62 @@ function ensureMusicContext() {
   return musicState.context;
 }
 
+function playMiniGameCorrectSound() {
+  const ctx = ensureMusicContext();
+  if (ctx.state === 'suspended') {
+    ctx.resume().catch(() => {});
+  }
+
+  const now = ctx.currentTime;
+  const master = ctx.createGain();
+  master.gain.setValueAtTime(0.0001, now);
+  master.gain.exponentialRampToValueAtTime(0.42, now + 0.015);
+  master.gain.exponentialRampToValueAtTime(0.0001, now + 0.34);
+  master.connect(ctx.destination);
+
+  [523.25, 659.25, 783.99].forEach((frequency, index) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    const startAt = now + index * 0.075;
+    osc.type = 'triangle';
+    osc.frequency.value = frequency;
+    gain.gain.setValueAtTime(0.0001, startAt);
+    gain.gain.exponentialRampToValueAtTime(0.22, startAt + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, startAt + 0.12);
+    osc.connect(gain);
+    gain.connect(master);
+    osc.start(startAt);
+    osc.stop(startAt + 0.14);
+  });
+}
+
+function playMiniGameWrongSound() {
+  const ctx = ensureMusicContext();
+  if (ctx.state === 'suspended') {
+    ctx.resume().catch(() => {});
+  }
+
+  const now = ctx.currentTime;
+  const master = ctx.createGain();
+  master.gain.setValueAtTime(0.0001, now);
+  master.gain.exponentialRampToValueAtTime(0.36, now + 0.02);
+  master.gain.exponentialRampToValueAtTime(0.0001, now + 0.42);
+  master.connect(ctx.destination);
+
+  const buzz = ctx.createOscillator();
+  const buzzGain = ctx.createGain();
+  buzz.type = 'sawtooth';
+  buzz.frequency.setValueAtTime(120, now);
+  buzz.frequency.exponentialRampToValueAtTime(52, now + 0.34);
+  buzzGain.gain.setValueAtTime(0.0001, now);
+  buzzGain.gain.exponentialRampToValueAtTime(0.18, now + 0.015);
+  buzzGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.38);
+  buzz.connect(buzzGain);
+  buzzGain.connect(master);
+  buzz.start(now);
+  buzz.stop(now + 0.4);
+}
+
 async function startBackgroundMusic() {
   if (!musicState.enabled) {
     return;
@@ -794,6 +852,24 @@ function setMiniGameFeedback(message, tone = 'neutral') {
   miniGameFeedbackEl.dataset.tone = tone;
 }
 
+function showMiniGamePopup(message, tone) {
+  if (!miniGamePopupEl) {
+    return;
+  }
+  miniGamePopupEl.textContent = message;
+  miniGamePopupEl.dataset.tone = tone;
+  miniGamePopupEl.hidden = false;
+  miniGamePopupEl.classList.remove('mini-game-popup--visible');
+  window.requestAnimationFrame(() => {
+    miniGamePopupEl.classList.add('mini-game-popup--visible');
+  });
+  clearTimeout(showMiniGamePopup.timer);
+  showMiniGamePopup.timer = window.setTimeout(() => {
+    miniGamePopupEl.classList.remove('mini-game-popup--visible');
+    miniGamePopupEl.hidden = true;
+  }, 950);
+}
+
 function createMiniGameQuestion() {
   const left = 2 + Math.floor(Math.random() * 8);
   const right = 2 + Math.floor(Math.random() * 8);
@@ -814,7 +890,7 @@ function renderMiniGameQuestion() {
   miniGameSubmitBtn.disabled = false;
   miniGameQuestionStartedAt = performance.now();
   miniGameQuestionResolved = false;
-  miniGameNextQuestionAt = miniGameQuestionStartedAt + 2000;
+  miniGameNextQuestionAt = miniGameQuestionStartedAt + MINI_GAME_ANSWER_MS;
   miniGameAnswerEl.focus({ preventScroll: true });
   setMiniGameFeedback('정답을 입력하세요.', 'neutral');
 }
@@ -857,7 +933,7 @@ function submitMiniGameAnswer(event) {
   }
 
   const elapsed = performance.now() - miniGameQuestionStartedAt;
-  if (elapsed > 2000) {
+  if (elapsed > MINI_GAME_ANSWER_MS) {
     return;
   }
 
@@ -873,8 +949,12 @@ function submitMiniGameAnswer(event) {
 
   if (answer === miniGameQuestion.answer) {
     applyMiniGameScore(300, '정답! +300점', 'correct');
+    showMiniGamePopup('좋아!', 'correct');
+    playMiniGameCorrectSound();
   } else {
     applyMiniGameScore(-300, `오답! 정답은 ${miniGameQuestion.answer}입니다. -300점`, 'wrong');
+    showMiniGamePopup('안좋아!', 'wrong');
+    playMiniGameWrongSound();
   }
 }
 
@@ -1000,17 +1080,19 @@ function updateMiniGame() {
 
   const now = performance.now();
   const elapsed = now - miniGameQuestionStartedAt;
-  const remaining = Math.max(0, 2000 - elapsed);
+  const remaining = Math.max(0, MINI_GAME_ANSWER_MS - elapsed);
 
   if (miniGameTimerEl) {
     miniGameTimerEl.textContent = `${(remaining / 1000).toFixed(1)}s`;
   }
 
-  if (!miniGameQuestionResolved && elapsed >= 2000) {
+  if (!miniGameQuestionResolved && elapsed >= MINI_GAME_ANSWER_MS) {
     miniGameQuestionResolved = true;
     miniGameAnswerEl.disabled = true;
     miniGameSubmitBtn.disabled = true;
     applyMiniGameScore(-300, `시간 초과! 정답은 ${miniGameQuestion.answer}입니다. -300점`, 'wrong');
+    showMiniGamePopup('안좋아!', 'wrong');
+    playMiniGameWrongSound();
   }
 
   if (miniGameQuestionResolved && now >= miniGameNextQuestionAt) {
