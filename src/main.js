@@ -98,6 +98,7 @@ let mobileSteer = 0;
 let selectedDifficultyKey = 'beginner';
 let miniGameNextQuestionAt = 0;
 let miniGameQuestionStartedAt = 0;
+let miniGameScheduledAt = 0;
 let miniGameEndsAt = 0;
 let miniGameQuestionResolved = false;
 let miniGameActive = false;
@@ -499,6 +500,10 @@ function getMiniGameVisibleMs() {
   return getSelectedDifficulty().miniGameSeconds * 1000;
 }
 
+function getMiniGameStartDelayMs() {
+  return selectedDifficultyKey === 'beginner' || selectedDifficultyKey === 'intermediate' ? 5000 : 0;
+}
+
 function applyDifficultySelection(key, syncObstacleSpeed = true) {
   const nextKey = DIFFICULTIES[key] ? key : 'beginner';
   const config = DIFFICULTIES[nextKey];
@@ -687,6 +692,35 @@ function playMiniGameCorrectSound() {
     gain.connect(master);
     osc.start(startAt);
     osc.stop(startAt + 0.14);
+  });
+}
+
+function playMiniGameStartSound() {
+  const ctx = ensureMusicContext();
+  if (ctx.state === 'suspended') {
+    ctx.resume().catch(() => {});
+  }
+
+  const now = ctx.currentTime;
+  const master = ctx.createGain();
+  master.gain.setValueAtTime(0.0001, now);
+  master.gain.exponentialRampToValueAtTime(0.5, now + 0.015);
+  master.gain.exponentialRampToValueAtTime(0.0001, now + 0.58);
+  master.connect(ctx.destination);
+
+  [392.0, 523.25, 659.25, 783.99].forEach((frequency, index) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    const startAt = now + index * 0.09;
+    osc.type = index % 2 === 0 ? 'square' : 'triangle';
+    osc.frequency.setValueAtTime(frequency, startAt);
+    gain.gain.setValueAtTime(0.0001, startAt);
+    gain.gain.exponentialRampToValueAtTime(0.16, startAt + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, startAt + 0.16);
+    osc.connect(gain);
+    gain.connect(master);
+    osc.start(startAt);
+    osc.stop(startAt + 0.18);
   });
 }
 
@@ -935,8 +969,10 @@ function startMiniGame() {
   }
   miniGameActive = true;
   miniGameShownInCurrentStraight = true;
+  miniGameScheduledAt = 0;
   miniGameEndsAt = performance.now() + getMiniGameVisibleMs();
   setMiniGameVisible(true);
+  playMiniGameStartSound();
   if (!miniGameQuestion || miniGameQuestionResolved) {
     miniGameQuestion = createMiniGameQuestion();
     renderMiniGameQuestion();
@@ -949,8 +985,25 @@ function stopMiniGame() {
   miniGameQuestionResolved = false;
   miniGameNextQuestionAt = 0;
   miniGameQuestionStartedAt = 0;
+  miniGameScheduledAt = 0;
   miniGameEndsAt = 0;
   setMiniGameVisible(false);
+}
+
+function scheduleMiniGameForStraight() {
+  stopMiniGame();
+  miniGameShownInCurrentStraight = false;
+  if (!state.running || roadModeCurrent !== 'straight') {
+    return;
+  }
+
+  const delayMs = getMiniGameStartDelayMs();
+  if (delayMs <= 0) {
+    startMiniGame();
+    return;
+  }
+
+  miniGameScheduledAt = performance.now() + delayMs;
 }
 
 function applyMiniGameScore(delta, message, tone) {
@@ -1000,8 +1053,7 @@ function setRoadMode(mode, announce = false) {
   roadModeCurrent = mode;
   roadModeTransition = 0;
   if (mode === 'straight' && state.running) {
-    miniGameShownInCurrentStraight = false;
-    startMiniGame();
+    scheduleMiniGameForStraight();
   } else if (mode === 'curve') {
     stopMiniGame();
     miniGameShownInCurrentStraight = false;
@@ -1063,8 +1115,7 @@ function startGame() {
   roadModeTransition = 1;
   roadModeCurrent = 'straight';
   roadModePrevious = 'straight';
-  miniGameShownInCurrentStraight = false;
-  startMiniGame();
+  scheduleMiniGameForStraight();
   startBackgroundMusic();
   showBanner('Race on', `Difficulty: ${DIFFICULTIES[selectedDifficultyKey].label}. Steer with WASD or arrow keys.`);
 }
@@ -1089,8 +1140,7 @@ function resetRace() {
   roadModeCurrent = 'straight';
   roadModePrevious = 'straight';
   roadModeNext = randomRoadMode('straight');
-  miniGameShownInCurrentStraight = false;
-  startMiniGame();
+  scheduleMiniGameForStraight();
   state.lane = 0;
   state.laneTarget = 0;
   state.shake = 0;
@@ -1113,7 +1163,8 @@ function updateMiniGame() {
   }
 
   if (!miniGameActive) {
-    if (!miniGameShownInCurrentStraight) {
+    const now = performance.now();
+    if (!miniGameShownInCurrentStraight && miniGameScheduledAt > 0 && now >= miniGameScheduledAt) {
       startMiniGame();
     }
     return;
@@ -1272,6 +1323,7 @@ function updateCollisions() {
       state.running = false;
       state.targetSpeed = 0;
       state.shake = 1.5;
+      stopMiniGame();
       playCrashSound();
       const bestScore = Math.max(state.best, state.score);
       state.best = bestScore;
