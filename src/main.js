@@ -46,21 +46,33 @@ const DIFFICULTIES = {
     label: 'Beginner',
     obstacleSpeed: 18,
     scoreMultiplier: 1.0,
+    straightSeconds: 20,
+    curveSeconds: 5,
+    miniGameSeconds: 5,
   },
   intermediate: {
     label: 'Intermediate',
     obstacleSpeed: 26,
     scoreMultiplier: 1.22,
+    straightSeconds: 20,
+    curveSeconds: 10,
+    miniGameSeconds: 10,
   },
   advanced: {
     label: 'Advanced',
     obstacleSpeed: 34,
     scoreMultiplier: 1.48,
+    straightSeconds: 10,
+    curveSeconds: 10,
+    miniGameSeconds: 10,
   },
   pro: {
     label: 'Pro',
     obstacleSpeed: 44,
     scoreMultiplier: 1.82,
+    straightSeconds: 5,
+    curveSeconds: 20,
+    miniGameSeconds: 5,
   },
 };
 
@@ -71,11 +83,9 @@ const ROAD_WIDTH = 12;
 const ROAD_SEGMENT_LENGTH = 8;
 const ROAD_SEGMENT_COUNT = 42;
 const LANE_OFFSETS = [-2.55, 0, 2.55];
-const ROAD_MODE_DURATION = 10;
 const ROAD_MODE_TRANSITION = 1.2;
 const ROAD_CURVE_AMPLITUDE = 3.1;
 const ROAD_CURVE_WAVE = 0.14;
-const MINI_GAME_ANSWER_MS = 3000;
 let trackProgress = 0;
 let roadModeElapsed = 0;
 let roadModeTransition = 1;
@@ -467,6 +477,19 @@ carPhotoInput.addEventListener('change', () => {
 
 function laneToX(lane) {
   return lane * 3.2;
+}
+
+function getSelectedDifficulty() {
+  return DIFFICULTIES[selectedDifficultyKey] || DIFFICULTIES.beginner;
+}
+
+function getRoadModeDuration() {
+  const config = getSelectedDifficulty();
+  return roadModeCurrent === 'curve' ? config.curveSeconds : config.straightSeconds;
+}
+
+function getMiniGameAnswerMs() {
+  return getSelectedDifficulty().miniGameSeconds * 1000;
 }
 
 function applyDifficultySelection(key, syncObstacleSpeed = true) {
@@ -884,13 +907,17 @@ function renderMiniGameQuestion() {
   if (!miniGameQuestion) {
     return;
   }
+  const answerMs = getMiniGameAnswerMs();
   miniGameQuestionEl.textContent = `${miniGameQuestion.left} x ${miniGameQuestion.right} = ?`;
   miniGameAnswerEl.value = '';
   miniGameAnswerEl.disabled = false;
   miniGameSubmitBtn.disabled = false;
   miniGameQuestionStartedAt = performance.now();
   miniGameQuestionResolved = false;
-  miniGameNextQuestionAt = miniGameQuestionStartedAt + MINI_GAME_ANSWER_MS;
+  miniGameNextQuestionAt = miniGameQuestionStartedAt + answerMs;
+  if (miniGameTimerEl) {
+    miniGameTimerEl.textContent = `${(answerMs / 1000).toFixed(1)}s`;
+  }
   miniGameAnswerEl.focus({ preventScroll: true });
   setMiniGameFeedback('정답을 입력하세요.', 'neutral');
 }
@@ -933,7 +960,7 @@ function submitMiniGameAnswer(event) {
   }
 
   const elapsed = performance.now() - miniGameQuestionStartedAt;
-  if (elapsed > MINI_GAME_ANSWER_MS) {
+  if (elapsed > getMiniGameAnswerMs()) {
     return;
   }
 
@@ -975,7 +1002,7 @@ function setRoadMode(mode, announce = false) {
 function advanceRoadMode(delta) {
   roadModeElapsed += delta;
   roadModeTransition = Math.min(1, roadModeTransition + delta / ROAD_MODE_TRANSITION);
-  if (roadModeElapsed < ROAD_MODE_DURATION) {
+  if (roadModeElapsed < getRoadModeDuration()) {
     return;
   }
   roadModeElapsed = 0;
@@ -1080,13 +1107,14 @@ function updateMiniGame() {
 
   const now = performance.now();
   const elapsed = now - miniGameQuestionStartedAt;
-  const remaining = Math.max(0, MINI_GAME_ANSWER_MS - elapsed);
+  const answerMs = getMiniGameAnswerMs();
+  const remaining = Math.max(0, answerMs - elapsed);
 
   if (miniGameTimerEl) {
     miniGameTimerEl.textContent = `${(remaining / 1000).toFixed(1)}s`;
   }
 
-  if (!miniGameQuestionResolved && elapsed >= MINI_GAME_ANSWER_MS) {
+  if (!miniGameQuestionResolved && elapsed >= answerMs) {
     miniGameQuestionResolved = true;
     miniGameAnswerEl.disabled = true;
     miniGameSubmitBtn.disabled = true;
