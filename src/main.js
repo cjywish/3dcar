@@ -464,8 +464,7 @@ function applyDifficultySelection(key, syncObstacleSpeed = true) {
   }
 
   if (syncObstacleSpeed) {
-    state.obstacleSpeed = config.obstacleSpeed;
-    updateObstacleSpeedUI();
+    setObstacleSpeed(config.obstacleSpeed);
   }
 
   for (const button of difficultyButtons) {
@@ -752,6 +751,14 @@ function updateObstacleSpeedUI() {
   obstacleSpeedValueEl.textContent = state.obstacleSpeed.toFixed(0);
 }
 
+function setObstacleSpeed(value, announce = false) {
+  state.obstacleSpeed = THREE.MathUtils.clamp(value, OBSTACLE_SPEED_MIN, OBSTACLE_SPEED_MAX);
+  updateObstacleSpeedUI();
+  if (announce) {
+    showBanner('Obstacle speed', `Set to ${state.obstacleSpeed.toFixed(0)}.`);
+  }
+}
+
 function setRoadMode(mode, announce = false) {
   roadModePrevious = roadModeCurrent;
   roadModeCurrent = mode;
@@ -773,13 +780,7 @@ function advanceRoadMode(delta) {
 }
 
 function adjustObstacleSpeed(delta) {
-  state.obstacleSpeed = THREE.MathUtils.clamp(
-    state.obstacleSpeed + delta,
-    OBSTACLE_SPEED_MIN,
-    OBSTACLE_SPEED_MAX,
-  );
-  updateObstacleSpeedUI();
-  showBanner('Obstacle speed', `Set to ${state.obstacleSpeed.toFixed(0)}.`);
+  setObstacleSpeed(state.obstacleSpeed + delta, true);
 }
 
 function hideStartScreen() {
@@ -994,6 +995,7 @@ function updateHUD() {
   distanceEl.textContent = Math.floor(state.distance).toString();
   const best = Math.max(state.best, state.score);
   bestEl.textContent = Math.floor(best).toString();
+  updateObstacleSpeedUI();
 }
 
 const clock = new THREE.Clock();
