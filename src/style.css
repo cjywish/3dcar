@@ -227,43 +227,43 @@ body::before {
 
 .hud {
   position: absolute;
-  top: 22px;
-  left: 22px;
-  width: min(400px, calc(100vw - 44px));
+  top: 14px;
+  left: 14px;
+  width: min(220px, calc(100vw - 28px));
   z-index: 4;
-  padding: 18px 18px 16px;
+  padding: 10px;
   border: 1px solid var(--panel-border);
   background: linear-gradient(180deg, rgba(10, 17, 31, 0.88), rgba(10, 17, 31, 0.55));
   backdrop-filter: blur(14px);
-  border-radius: 22px;
+  border-radius: 16px;
   box-shadow: var(--shadow);
 }
 
 .hud__eyebrow {
   display: inline-block;
   color: var(--accent);
-  font-size: 0.8rem;
-  letter-spacing: 0.2em;
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .hud h1 {
   margin: 0;
-  font-size: clamp(2rem, 3.5vw, 3rem);
+  font-size: clamp(1.05rem, 1.9vw, 1.45rem);
   line-height: 1;
 }
 
 .hud__stats {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  margin: 18px 0 14px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  margin: 10px 0 8px;
 }
 
 .hud__stats div {
-  padding: 12px 12px 10px;
-  border-radius: 16px;
+  padding: 8px 8px 7px;
+  border-radius: 12px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.07);
 }
@@ -271,23 +271,23 @@ body::before {
 .hud__stats span {
   display: block;
   color: var(--muted);
-  font-size: 0.78rem;
+  font-size: 0.62rem;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
 }
 
 .hud__stats strong {
   display: block;
-  margin-top: 6px;
-  font-size: 1.5rem;
+  margin-top: 4px;
+  font-size: 0.95rem;
 }
 
 .hud__help {
   display: grid;
   gap: 2px;
-  margin-bottom: 14px;
+  margin-bottom: 8px;
   color: var(--muted);
-  font-size: 0.95rem;
+  font-size: 0.68rem;
 }
 
 .hud__help p {
@@ -297,9 +297,9 @@ body::before {
 .hud__mode {
   display: grid;
   gap: 2px;
-  margin-bottom: 14px;
-  padding: 12px 12px 10px;
-  border-radius: 16px;
+  margin-bottom: 8px;
+  padding: 8px 8px 7px;
+  border-radius: 12px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.07);
 }
@@ -307,55 +307,55 @@ body::before {
 .hud__mode span {
   display: block;
   color: var(--muted);
-  font-size: 0.78rem;
+  font-size: 0.62rem;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
 }
 
 .hud__mode strong {
   display: block;
-  margin-top: 6px;
-  font-size: 1.15rem;
+  margin-top: 4px;
+  font-size: 0.9rem;
 }
 
 .hud__speed-control {
   display: grid;
-  gap: 8px;
-  margin-bottom: 14px;
+  gap: 5px;
+  margin-bottom: 8px;
 }
 
 .hud__speed-control > span {
   color: var(--muted);
-  font-size: 0.78rem;
+  font-size: 0.62rem;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
 }
 
 .hud__speed-row {
   display: grid;
-  grid-template-columns: 44px 1fr 44px;
-  gap: 10px;
+  grid-template-columns: 32px 1fr 32px;
+  gap: 5px;
   align-items: center;
 }
 
 .hud__speed-row strong {
   display: grid;
   place-items: center;
-  min-height: 44px;
-  border-radius: 14px;
+  min-height: 32px;
+  border-radius: 10px;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  font-size: 1.15rem;
+  font-size: 0.9rem;
 }
 
 .hud__speed-row button {
   appearance: none;
   border: 0;
-  min-height: 44px;
-  border-radius: 14px;
+  min-height: 32px;
+  border-radius: 10px;
   background: rgba(255, 255, 255, 0.08);
   color: var(--text);
-  font-size: 1.4rem;
+  font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -373,31 +373,31 @@ body::before {
 
 .hud__photo-control {
   display: grid;
-  gap: 8px;
-  margin-bottom: 14px;
+  gap: 5px;
+  margin-bottom: 8px;
 }
 
 .hud__photo-control > span {
   color: var(--muted);
-  font-size: 0.78rem;
+  font-size: 0.62rem;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
 }
 
 .hud__photo-row {
   display: grid;
-  grid-template-columns: 1fr 88px;
-  gap: 10px;
+  grid-template-columns: 1fr 58px;
+  gap: 5px;
 }
 
 .hud__photo-row button {
   appearance: none;
   border: 0;
-  min-height: 44px;
-  border-radius: 14px;
+  min-height: 32px;
+  border-radius: 10px;
   background: rgba(255, 255, 255, 0.08);
   color: var(--text);
-  font-size: 0.95rem;
+  font-size: 0.72rem;
   font-weight: 700;
   cursor: pointer;
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -419,25 +419,25 @@ body::before {
 
 .hud__music-control {
   display: grid;
-  gap: 8px;
-  margin-bottom: 14px;
+  gap: 5px;
+  margin-bottom: 8px;
 }
 
 .hud__music-control > span {
   color: var(--muted);
-  font-size: 0.78rem;
+  font-size: 0.62rem;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
 }
 
 #music-toggle {
   appearance: none;
   border: 0;
-  min-height: 44px;
-  border-radius: 14px;
+  min-height: 32px;
+  border-radius: 10px;
   background: linear-gradient(90deg, rgba(73, 217, 255, 0.22), rgba(255, 159, 28, 0.2));
   color: var(--text);
-  font-size: 0.98rem;
+  font-size: 0.72rem;
   font-weight: 800;
   cursor: pointer;
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -464,11 +464,12 @@ kbd {
   appearance: none;
   border: 0;
   width: 100%;
-  padding: 12px 14px;
-  border-radius: 14px;
+  padding: 8px 10px;
+  border-radius: 10px;
   background: linear-gradient(90deg, var(--accent), var(--accent-2));
   color: #05121d;
   font-weight: 800;
+  font-size: 0.72rem;
   letter-spacing: 0.02em;
   box-shadow: 0 12px 32px rgba(73, 217, 255, 0.24);
   cursor: pointer;
