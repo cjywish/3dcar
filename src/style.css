@@ -85,9 +85,9 @@ body::before {
 }
 
 .crash-screen__panel {
-  width: min(560px, calc(100vw - 32px));
-  padding: 28px;
-  border-radius: 28px;
+  width: min(300px, calc(100vw - 16px));
+  padding: 14px;
+  border-radius: 18px;
   border: 1px solid rgba(159, 205, 255, 0.2);
   background: linear-gradient(180deg, rgba(10, 17, 31, 0.96), rgba(10, 17, 31, 0.78));
   box-shadow: 0 24px 90px rgba(0, 0, 0, 0.5);
@@ -95,27 +95,28 @@ body::before {
 }
 
 .crash-screen__panel h2 {
-  margin: 8px 0 10px;
-  font-size: clamp(1.8rem, 3.8vw, 2.6rem);
+  margin: 6px 0 8px;
+  font-size: clamp(1.15rem, 3vw, 1.6rem);
 }
 
 .crash-screen__panel p {
-  margin: 0 0 18px;
+  margin: 0 0 10px;
   color: var(--muted);
-  line-height: 1.6;
+  line-height: 1.45;
+  font-size: 0.82rem;
 }
 
 .crash-screen__panel > button {
   appearance: none;
   border: 0;
-  min-height: 52px;
-  min-width: 180px;
-  padding: 0 22px;
+  min-height: 38px;
+  min-width: 120px;
+  padding: 0 12px;
   border-radius: 16px;
   background: linear-gradient(90deg, var(--accent), var(--accent-2));
   color: #05121d;
   font-weight: 900;
-  font-size: 1rem;
+  font-size: 0.9rem;
   cursor: pointer;
   box-shadow: 0 16px 40px rgba(73, 217, 255, 0.28);
 }
@@ -129,9 +130,9 @@ body::before {
 }
 
 .start-screen__panel {
-  width: min(520px, calc(100vw - 32px));
-  padding: 28px;
-  border-radius: 28px;
+  width: min(300px, calc(100vw - 16px));
+  padding: 14px;
+  border-radius: 18px;
   border: 1px solid rgba(159, 205, 255, 0.2);
   background: linear-gradient(180deg, rgba(10, 17, 31, 0.94), rgba(10, 17, 31, 0.72));
   box-shadow: 0 24px 90px rgba(0, 0, 0, 0.5);
@@ -139,27 +140,28 @@ body::before {
 }
 
 .start-screen__panel h2 {
-  margin: 8px 0 10px;
-  font-size: clamp(2rem, 4vw, 3rem);
+  margin: 6px 0 8px;
+  font-size: clamp(1.25rem, 3vw, 1.8rem);
 }
 
 .start-screen__panel p {
-  margin: 0 0 18px;
+  margin: 0 0 10px;
   color: var(--muted);
-  line-height: 1.6;
+  line-height: 1.45;
+  font-size: 0.82rem;
 }
 
 .start-screen__panel > button {
   appearance: none;
   border: 0;
-  min-height: 52px;
-  min-width: 180px;
-  padding: 0 22px;
+  min-height: 38px;
+  min-width: 120px;
+  padding: 0 12px;
   border-radius: 16px;
   background: linear-gradient(90deg, var(--accent), var(--accent-2));
   color: #05121d;
   font-weight: 900;
-  font-size: 1rem;
+  font-size: 0.9rem;
   cursor: pointer;
   box-shadow: 0 16px 40px rgba(73, 217, 255, 0.28);
 }
@@ -175,15 +177,15 @@ body::before {
 .difficulty-select {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-  margin: 18px 0 20px;
+  gap: 6px;
+  margin: 10px 0 12px;
 }
 
 .difficulty-btn {
   appearance: none;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 14px 12px;
-  border-radius: 18px;
+  padding: 8px 8px;
+  border-radius: 12px;
   background: rgba(255, 255, 255, 0.05);
   color: var(--text);
   text-align: left;
@@ -195,12 +197,12 @@ body::before {
 }
 
 .difficulty-btn strong {
-  font-size: 1rem;
+  font-size: 0.82rem;
 }
 
 .difficulty-btn span {
   color: var(--muted);
-  font-size: 0.78rem;
+  font-size: 0.66rem;
 }
 
 .difficulty-btn:hover {
@@ -587,6 +589,13 @@ kbd {
   .crash-screen__panel {
     width: calc(100vw - 24px);
     padding: 22px 18px;
+  }
+
+  .start-screen__panel > button,
+  .crash-screen__panel > button {
+    min-height: 38px;
+    min-width: 120px;
+    font-size: 0.9rem;
   }
 
   .mobile-controls {
