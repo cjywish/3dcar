@@ -473,9 +473,10 @@ body::before {
   position: absolute;
   top: 14px;
   right: 14px;
-  z-index: 4;
+  z-index: 5;
   width: min(240px, calc(100vw - 28px));
   padding: 0;
+  display: none;
 }
 
 .mini-game--visible {

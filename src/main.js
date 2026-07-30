@@ -102,6 +102,7 @@ let miniGameEndsAt = 0;
 let miniGameQuestionResolved = false;
 let miniGameActive = false;
 let miniGameQuestion = null;
+let miniGameShownInCurrentStraight = false;
 const textureLoader = new THREE.TextureLoader();
 const musicState = {
   enabled: true,
@@ -929,10 +930,11 @@ function renderMiniGameQuestion() {
 }
 
 function startMiniGame() {
-  if (!state.running) {
+  if (!state.running || roadModeCurrent !== 'straight') {
     return;
   }
   miniGameActive = true;
+  miniGameShownInCurrentStraight = true;
   miniGameEndsAt = performance.now() + getMiniGameVisibleMs();
   setMiniGameVisible(true);
   if (!miniGameQuestion || miniGameQuestionResolved) {
@@ -998,9 +1000,11 @@ function setRoadMode(mode, announce = false) {
   roadModeCurrent = mode;
   roadModeTransition = 0;
   if (mode === 'straight' && state.running) {
+    miniGameShownInCurrentStraight = false;
     startMiniGame();
   } else if (mode === 'curve') {
     stopMiniGame();
+    miniGameShownInCurrentStraight = false;
   }
   if (announce) {
     showBanner('Road mode', mode === 'straight' ? 'Straight stretch ahead.' : 'Curved section ahead.');
@@ -1057,6 +1061,9 @@ function startGame() {
   hideCrashScreen();
   roadModeElapsed = 0;
   roadModeTransition = 1;
+  roadModeCurrent = 'straight';
+  roadModePrevious = 'straight';
+  miniGameShownInCurrentStraight = false;
   startMiniGame();
   startBackgroundMusic();
   showBanner('Race on', `Difficulty: ${DIFFICULTIES[selectedDifficultyKey].label}. Steer with WASD or arrow keys.`);
@@ -1082,6 +1089,7 @@ function resetRace() {
   roadModeCurrent = 'straight';
   roadModePrevious = 'straight';
   roadModeNext = randomRoadMode('straight');
+  miniGameShownInCurrentStraight = false;
   startMiniGame();
   state.lane = 0;
   state.laneTarget = 0;
@@ -1105,6 +1113,9 @@ function updateMiniGame() {
   }
 
   if (!miniGameActive) {
+    if (!miniGameShownInCurrentStraight) {
+      startMiniGame();
+    }
     return;
   }
 
