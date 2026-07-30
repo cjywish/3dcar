@@ -82,6 +82,22 @@
         </div>
         <button id="restart" type="button">Restart Race</button>
       </div>
+      <div class="mini-game" id="mini-game" hidden aria-live="polite">
+        <div class="mini-game__panel">
+          <span class="hud__eyebrow">Mini Game</span>
+          <h2>구구단</h2>
+          <p id="mini-game-question">2 x 3 = ?</p>
+          <form id="mini-game-form" class="mini-game__form">
+            <input id="mini-game-answer" type="number" inputmode="numeric" autocomplete="off" placeholder="정답 입력" />
+            <button id="mini-game-submit" type="submit">확인</button>
+          </form>
+          <div class="mini-game__meta">
+            <span>남은 시간</span>
+            <strong id="mini-game-timer">2.0s</strong>
+          </div>
+          <div class="mini-game__feedback" id="mini-game-feedback">정답을 입력하세요.</div>
+        </div>
+      </div>
       <div class="banner" id="banner">
         <strong>Ready</strong>
         <span>Press Start Game to begin racing.</span>

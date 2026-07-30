@@ -469,6 +469,113 @@ body::before {
   transform: translateY(1px);
 }
 
+.mini-game {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 4;
+  width: min(240px, calc(100vw - 28px));
+  padding: 0;
+}
+
+.mini-game--visible {
+  display: block;
+}
+
+.mini-game__panel {
+  padding: 10px;
+  border-radius: 16px;
+  border: 1px solid rgba(159, 205, 255, 0.18);
+  background: linear-gradient(180deg, rgba(10, 17, 31, 0.9), rgba(10, 17, 31, 0.62));
+  backdrop-filter: blur(14px);
+  box-shadow: var(--shadow);
+}
+
+.mini-game__panel h2 {
+  margin: 2px 0 8px;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.mini-game__panel p {
+  margin: 0 0 8px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.mini-game__form {
+  display: grid;
+  grid-template-columns: 1fr 64px;
+  gap: 6px;
+}
+
+.mini-game__form input {
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  min-height: 34px;
+  padding: 0 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+  font: inherit;
+}
+
+.mini-game__form input::placeholder {
+  color: rgba(143, 176, 207, 0.8);
+}
+
+.mini-game__form button {
+  appearance: none;
+  border: 0;
+  min-height: 34px;
+  border-radius: 10px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  color: #05121d;
+  font-weight: 900;
+  font-size: 0.72rem;
+  cursor: pointer;
+}
+
+.mini-game__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+  padding: 6px 8px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.mini-game__meta strong {
+  color: var(--text);
+  font-size: 0.8rem;
+}
+
+.mini-game__feedback {
+  margin-top: 8px;
+  min-height: 1.1em;
+  font-size: 0.72rem;
+  line-height: 1.35;
+  color: var(--muted);
+}
+
+.mini-game__feedback[data-tone="correct"] {
+  color: #7cffb2;
+}
+
+.mini-game__feedback[data-tone="wrong"] {
+  color: #ff8f8f;
+}
+
+.mini-game__feedback[data-tone="warn"] {
+  color: #ffd166;
+}
+
 kbd {
   padding: 0.15rem 0.45rem;
   border-radius: 8px;
@@ -607,6 +714,13 @@ kbd {
   .crash-screen__panel {
     width: calc(100vw - 24px);
     padding: 22px 18px;
+  }
+
+  .mini-game {
+    top: auto;
+    right: 12px;
+    bottom: 12px;
+    width: min(220px, calc(100vw - 24px));
   }
 
   .start-screen__panel > button,

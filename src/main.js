@@ -22,6 +22,13 @@ const startScreen = document.querySelector('#start-screen');
 const crashScreen = document.querySelector('#crash-screen');
 const startGameBtn = document.querySelector('#start-game');
 const crashRestartBtn = document.querySelector('#crash-restart');
+const miniGamePanel = document.querySelector('#mini-game');
+const miniGameForm = document.querySelector('#mini-game-form');
+const miniGameQuestionEl = document.querySelector('#mini-game-question');
+const miniGameAnswerEl = document.querySelector('#mini-game-answer');
+const miniGameSubmitBtn = document.querySelector('#mini-game-submit');
+const miniGameTimerEl = document.querySelector('#mini-game-timer');
+const miniGameFeedbackEl = document.querySelector('#mini-game-feedback');
 const bannerEl = document.querySelector('#banner');
 const restartBtn = document.querySelector('#restart');
 
@@ -76,6 +83,11 @@ let defaultCarPhotoTexture = null;
 let activeCarPhotoTexture = null;
 let mobileSteer = 0;
 let selectedDifficultyKey = 'beginner';
+let miniGameNextQuestionAt = 0;
+let miniGameQuestionStartedAt = 0;
+let miniGameQuestionResolved = false;
+let miniGameActive = false;
+let miniGameQuestion = null;
 const textureLoader = new THREE.TextureLoader();
 const musicState = {
   enabled: true,
@@ -439,6 +451,7 @@ bindSteeringButton(mobileRightBtn, 1);
 musicToggleBtn.addEventListener('click', toggleBackgroundMusic);
 startGameBtn.addEventListener('click', startGame);
 startGameBtn.onclick = startGame;
+miniGameForm.addEventListener('submit', submitMiniGameAnswer);
 startScreen.addEventListener('click', (event) => {
   if (event.target === startScreen) {
     startGame();
@@ -765,10 +778,115 @@ function setObstacleSpeed(value, announce = false) {
   }
 }
 
+function setMiniGameVisible(visible) {
+  if (!miniGamePanel) {
+    return;
+  }
+  miniGamePanel.hidden = !visible;
+  miniGamePanel.classList.toggle('mini-game--visible', visible);
+}
+
+function setMiniGameFeedback(message, tone = 'neutral') {
+  if (!miniGameFeedbackEl) {
+    return;
+  }
+  miniGameFeedbackEl.textContent = message;
+  miniGameFeedbackEl.dataset.tone = tone;
+}
+
+function createMiniGameQuestion() {
+  const left = 2 + Math.floor(Math.random() * 8);
+  const right = 2 + Math.floor(Math.random() * 8);
+  return {
+    left,
+    right,
+    answer: left * right,
+  };
+}
+
+function renderMiniGameQuestion() {
+  if (!miniGameQuestion) {
+    return;
+  }
+  miniGameQuestionEl.textContent = `${miniGameQuestion.left} x ${miniGameQuestion.right} = ?`;
+  miniGameAnswerEl.value = '';
+  miniGameAnswerEl.disabled = false;
+  miniGameSubmitBtn.disabled = false;
+  miniGameQuestionStartedAt = performance.now();
+  miniGameQuestionResolved = false;
+  miniGameNextQuestionAt = miniGameQuestionStartedAt + 2000;
+  miniGameAnswerEl.focus({ preventScroll: true });
+  setMiniGameFeedback('정답을 입력하세요.', 'neutral');
+}
+
+function startMiniGame() {
+  if (!state.running) {
+    return;
+  }
+  miniGameActive = true;
+  setMiniGameVisible(true);
+  if (!miniGameQuestion || miniGameQuestionResolved) {
+    miniGameQuestion = createMiniGameQuestion();
+    renderMiniGameQuestion();
+  }
+}
+
+function stopMiniGame() {
+  miniGameActive = false;
+  miniGameQuestion = null;
+  miniGameQuestionResolved = false;
+  miniGameNextQuestionAt = 0;
+  miniGameQuestionStartedAt = 0;
+  setMiniGameVisible(false);
+}
+
+function applyMiniGameScore(delta, message, tone) {
+  state.score += delta;
+  if (state.score > state.best) {
+    state.best = state.score;
+    localStorage.setItem('neon-ridge-best-score', Math.floor(state.best).toString());
+    localStorage.setItem('neon-ridge-best', Math.floor(state.best).toString());
+  }
+  setMiniGameFeedback(message, tone);
+}
+
+function submitMiniGameAnswer(event) {
+  event.preventDefault();
+  if (!miniGameActive || !miniGameQuestion || miniGameQuestionResolved || !state.running) {
+    return;
+  }
+
+  const elapsed = performance.now() - miniGameQuestionStartedAt;
+  if (elapsed > 2000) {
+    return;
+  }
+
+  const answer = Number.parseInt(miniGameAnswerEl.value, 10);
+  if (!Number.isFinite(answer)) {
+    setMiniGameFeedback('숫자를 입력하세요.', 'warn');
+    return;
+  }
+
+  miniGameQuestionResolved = true;
+  miniGameAnswerEl.disabled = true;
+  miniGameSubmitBtn.disabled = true;
+
+  if (answer === miniGameQuestion.answer) {
+    applyMiniGameScore(300, '정답! +300점', 'correct');
+  } else {
+    applyMiniGameScore(-300, `오답! 정답은 ${miniGameQuestion.answer}입니다. -300점`, 'wrong');
+  }
+}
+
 function setRoadMode(mode, announce = false) {
   roadModePrevious = roadModeCurrent;
   roadModeCurrent = mode;
   roadModeTransition = 0;
+  if (mode === 'straight' && state.running) {
+    startMiniGame();
+  } else if (mode === 'curve') {
+    stopMiniGame();
+  }
   if (announce) {
     showBanner('Road mode', mode === 'straight' ? 'Straight stretch ahead.' : 'Curved section ahead.');
   }
@@ -824,6 +942,7 @@ function startGame() {
   hideCrashScreen();
   roadModeElapsed = 0;
   roadModeTransition = 1;
+  startMiniGame();
   startBackgroundMusic();
   showBanner('Race on', `Difficulty: ${DIFFICULTIES[selectedDifficultyKey].label}. Steer with WASD or arrow keys.`);
 }
@@ -848,6 +967,7 @@ function resetRace() {
   roadModeCurrent = 'straight';
   roadModePrevious = 'straight';
   roadModeNext = randomRoadMode('straight');
+  startMiniGame();
   state.lane = 0;
   state.laneTarget = 0;
   state.shake = 0;
@@ -861,6 +981,42 @@ function resetRace() {
     obstacle.rotation.y = roadHeadingAt(obstacle.position.z);
   }
   showBanner('Race reset', 'Stay centered and push for a new best score.');
+}
+
+function updateMiniGame() {
+  if (!state.running || roadModeCurrent !== 'straight') {
+    stopMiniGame();
+    return;
+  }
+
+  if (!miniGameActive) {
+    startMiniGame();
+  }
+
+  if (!miniGameQuestion) {
+    miniGameQuestion = createMiniGameQuestion();
+    renderMiniGameQuestion();
+  }
+
+  const now = performance.now();
+  const elapsed = now - miniGameQuestionStartedAt;
+  const remaining = Math.max(0, 2000 - elapsed);
+
+  if (miniGameTimerEl) {
+    miniGameTimerEl.textContent = `${(remaining / 1000).toFixed(1)}s`;
+  }
+
+  if (!miniGameQuestionResolved && elapsed >= 2000) {
+    miniGameQuestionResolved = true;
+    miniGameAnswerEl.disabled = true;
+    miniGameSubmitBtn.disabled = true;
+    applyMiniGameScore(-300, `시간 초과! 정답은 ${miniGameQuestion.answer}입니다. -300점`, 'wrong');
+  }
+
+  if (miniGameQuestionResolved && now >= miniGameNextQuestionAt) {
+    miniGameQuestion = createMiniGameQuestion();
+    renderMiniGameQuestion();
+  }
 }
 
 function updateControls(delta) {
@@ -1000,6 +1156,11 @@ function updateHUD() {
   scoreEl.textContent = Math.floor(state.score).toString();
   distanceEl.textContent = Math.floor(state.distance).toString();
   const best = Math.max(state.best, state.score);
+  if (best > state.best) {
+    state.best = best;
+    localStorage.setItem('neon-ridge-best-score', Math.floor(best).toString());
+    localStorage.setItem('neon-ridge-best', Math.floor(best).toString());
+  }
   bestEl.textContent = Math.floor(best).toString();
   updateObstacleSpeedUI();
 }
@@ -1016,6 +1177,7 @@ function animate() {
     updateWorld(delta);
     updateCollisions();
   }
+  updateMiniGame();
   updateHUD();
 
   camera.position.x += (player.position.x * 0.28 - camera.position.x) * 0.08;
