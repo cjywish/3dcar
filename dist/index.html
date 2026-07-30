@@ -8,8 +8,8 @@
       name="description"
       content="A fast Three.js racing game with arcade controls, obstacles, and score tracking."
     />
-    <script type="module" crossorigin src="/assets/index-j8gFHcIn.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-TKHvA-BM.css">
+    <script type="module" crossorigin src="/assets/index-DjQUxOKf.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DK-3OxTD.css">
   </head>
   <body>
     <div id="app">
@@ -84,6 +84,32 @@
       <div class="banner" id="banner">
         <strong>Ready</strong>
         <span>Press Start Game to begin racing.</span>
+      </div>
+      <div class="crash-screen" id="crash-screen" hidden>
+        <div class="crash-screen__panel">
+          <span class="hud__eyebrow">Crash detected</span>
+          <h2>Choose a new difficulty</h2>
+          <p>You can change difficulty here and then restart the race.</p>
+          <div class="difficulty-select" aria-label="Select difficulty after crash">
+            <button class="difficulty-btn" type="button" data-difficulty="beginner">
+              <strong>Beginner</strong>
+              <span>Obstacle speed 18</span>
+            </button>
+            <button class="difficulty-btn" type="button" data-difficulty="intermediate">
+              <strong>Intermediate</strong>
+              <span>Obstacle speed 26</span>
+            </button>
+            <button class="difficulty-btn" type="button" data-difficulty="advanced">
+              <strong>Advanced</strong>
+              <span>Obstacle speed 34</span>
+            </button>
+            <button class="difficulty-btn" type="button" data-difficulty="pro">
+              <strong>Pro</strong>
+              <span>Obstacle speed 44</span>
+            </button>
+          </div>
+          <button id="crash-restart" type="button">Restart Race</button>
+        </div>
       </div>
       <div class="mobile-controls" aria-label="Mobile steering controls">
         <button id="mobile-left" class="mobile-controls__btn mobile-controls__btn--left" type="button" aria-label="Steer left">LEFT</button>

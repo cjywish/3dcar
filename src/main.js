@@ -18,7 +18,9 @@ const mobileLeftBtn = document.querySelector('#mobile-left');
 const mobileRightBtn = document.querySelector('#mobile-right');
 const musicToggleBtn = document.querySelector('#music-toggle');
 const startScreen = document.querySelector('#start-screen');
+const crashScreen = document.querySelector('#crash-screen');
 const startGameBtn = document.querySelector('#start-game');
+const crashRestartBtn = document.querySelector('#crash-restart');
 const bannerEl = document.querySelector('#banner');
 const restartBtn = document.querySelector('#restart');
 
@@ -421,6 +423,7 @@ window.addEventListener('keyup', (event) => {
 });
 
 restartBtn.addEventListener('click', resetRace);
+crashRestartBtn.addEventListener('click', resetRace);
 obstacleSpeedDownBtn.addEventListener('click', () => adjustObstacleSpeed(-OBSTACLE_SPEED_STEP));
 obstacleSpeedUpBtn.addEventListener('click', () => adjustObstacleSpeed(OBSTACLE_SPEED_STEP));
 difficultyButtons.forEach((button) => {
@@ -786,6 +789,22 @@ function hideStartScreen() {
   document.body.classList.add('game-started');
 }
 
+function showCrashScreen() {
+  if (!crashScreen) {
+    return;
+  }
+  crashScreen.hidden = false;
+  crashScreen.classList.add('crash-screen--visible');
+}
+
+function hideCrashScreen() {
+  if (!crashScreen) {
+    return;
+  }
+  crashScreen.classList.remove('crash-screen--visible');
+  crashScreen.hidden = true;
+}
+
 function startGame() {
   applyDifficultySelection(selectedDifficultyKey, true);
   state.running = true;
@@ -795,6 +814,7 @@ function startGame() {
   state.distance = 0;
   state.collisionGraceUntil = performance.now() + 1000;
   hideStartScreen();
+  hideCrashScreen();
   roadModeElapsed = 0;
   roadModeTransition = 1;
   startBackgroundMusic();
@@ -807,6 +827,7 @@ window.resetRace = resetRace;
 function resetRace() {
   applyDifficultySelection(selectedDifficultyKey, true);
   state.running = true;
+  hideCrashScreen();
   hideStartScreen();
   state.speed = 0.35;
   state.targetSpeed = 0.35;
@@ -961,6 +982,7 @@ function updateCollisions() {
       localStorage.setItem('neon-ridge-best-score', bestScore.toFixed(0));
       localStorage.setItem('neon-ridge-best', bestScore.toFixed(0));
       showBanner('Crash!', 'Press Restart Race or R to try again.');
+      showCrashScreen();
       return;
     }
   }
