@@ -86,6 +86,7 @@ const LANE_OFFSETS = [-2.55, 0, 2.55];
 const ROAD_MODE_TRANSITION = 1.2;
 const ROAD_CURVE_AMPLITUDE = 3.1;
 const ROAD_CURVE_WAVE = 0.14;
+const MINI_GAME_ANSWER_MS = 3000;
 let trackProgress = 0;
 let roadModeElapsed = 0;
 let roadModeTransition = 1;
@@ -97,6 +98,7 @@ let mobileSteer = 0;
 let selectedDifficultyKey = 'beginner';
 let miniGameNextQuestionAt = 0;
 let miniGameQuestionStartedAt = 0;
+let miniGameEndsAt = 0;
 let miniGameQuestionResolved = false;
 let miniGameActive = false;
 let miniGameQuestion = null;
@@ -489,6 +491,10 @@ function getRoadModeDuration() {
 }
 
 function getMiniGameAnswerMs() {
+  return MINI_GAME_ANSWER_MS;
+}
+
+function getMiniGameVisibleMs() {
   return getSelectedDifficulty().miniGameSeconds * 1000;
 }
 
@@ -927,6 +933,7 @@ function startMiniGame() {
     return;
   }
   miniGameActive = true;
+  miniGameEndsAt = performance.now() + getMiniGameVisibleMs();
   setMiniGameVisible(true);
   if (!miniGameQuestion || miniGameQuestionResolved) {
     miniGameQuestion = createMiniGameQuestion();
@@ -940,6 +947,7 @@ function stopMiniGame() {
   miniGameQuestionResolved = false;
   miniGameNextQuestionAt = 0;
   miniGameQuestionStartedAt = 0;
+  miniGameEndsAt = 0;
   setMiniGameVisible(false);
 }
 
@@ -1097,7 +1105,7 @@ function updateMiniGame() {
   }
 
   if (!miniGameActive) {
-    startMiniGame();
+    return;
   }
 
   if (!miniGameQuestion) {
@@ -1106,6 +1114,11 @@ function updateMiniGame() {
   }
 
   const now = performance.now();
+  if (miniGameEndsAt > 0 && now >= miniGameEndsAt) {
+    stopMiniGame();
+    return;
+  }
+
   const elapsed = now - miniGameQuestionStartedAt;
   const answerMs = getMiniGameAnswerMs();
   const remaining = Math.max(0, answerMs - elapsed);
