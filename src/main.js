@@ -6,6 +6,7 @@ const speedEl = document.querySelector('#speed');
 const scoreEl = document.querySelector('#score');
 const distanceEl = document.querySelector('#distance');
 const bestEl = document.querySelector('#best');
+const difficultyLabelEl = document.querySelector('#difficulty-label');
 const obstacleSpeedValueEl = document.querySelector('#obstacle-speed-value');
 const obstacleSpeedDownBtn = document.querySelector('#obstacle-speed-down');
 const obstacleSpeedUpBtn = document.querySelector('#obstacle-speed-up');
@@ -455,6 +456,9 @@ function applyDifficultySelection(key, syncObstacleSpeed = true) {
 
   selectedDifficultyKey = nextKey;
   state.scoreMultiplier = config.scoreMultiplier;
+  if (difficultyLabelEl) {
+    difficultyLabelEl.textContent = config.label;
+  }
 
   if (syncObstacleSpeed) {
     state.obstacleSpeed = config.obstacleSpeed;
