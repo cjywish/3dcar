@@ -23,6 +23,7 @@ const startScreen = document.querySelector('#start-screen');
 const crashScreen = document.querySelector('#crash-screen');
 const startGameBtn = document.querySelector('#start-game');
 const crashRestartBtn = document.querySelector('#crash-restart');
+const manualDownloadLink = document.querySelector('#manual-download');
 const miniGamePanel = document.querySelector('#mini-game');
 const miniGameForm = document.querySelector('#mini-game-form');
 const miniGameQuestionEl = document.querySelector('#mini-game-question');
@@ -659,6 +660,18 @@ function getMiniGameStartDelayMs() {
   return selectedDifficultyKey === 'beginner' || selectedDifficultyKey === 'intermediate' ? 5000 : 0;
 }
 
+function updateManualDownloadLink() {
+  if (!manualDownloadLink) {
+    return;
+  }
+
+  const fileName = currentLanguage === 'en' ? 'real_3d_car_user_manual_en.pdf' : 'real_3d_car_user_manual.pdf';
+  const manualHref = window.REAL_3D_CAR_MANUALS?.[fileName] || `./${fileName}`;
+  manualDownloadLink.href = manualHref;
+  manualDownloadLink.download = fileName;
+  manualDownloadLink.type = 'application/pdf';
+}
+
 function applyDifficultySelection(key, syncObstacleSpeed = true) {
   const nextKey = DIFFICULTIES[key] ? key : 'beginner';
   const config = DIFFICULTIES[nextKey];
@@ -702,6 +715,7 @@ function applyLanguage(language) {
   });
 
   applyDifficultySelection(selectedDifficultyKey, false);
+  updateManualDownloadLink();
   updateMusicButton();
 }
 

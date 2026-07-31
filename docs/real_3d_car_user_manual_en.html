@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>real 3D car User Manual</title>
+    <style>
+      @page {
+        size: A4;
+        margin: 18mm 16mm;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        color: #172033;
+        background: #ffffff;
+        font-family: "Segoe UI", "Malgun Gothic", sans-serif;
+        font-size: 10.5pt;
+        line-height: 1.58;
+      }
+
+      h1,
+      h2,
+      h3 {
+        margin: 0;
+        color: #0b1220;
+        line-height: 1.25;
+      }
+
+      h1 {
+        font-size: 28pt;
+      }
+
+      h2 {
+        margin-top: 24px;
+        padding-bottom: 6px;
+        border-bottom: 2px solid #d7e3f1;
+        font-size: 16pt;
+      }
+
+      h3 {
+        margin-top: 16px;
+        font-size: 12pt;
+      }
+
+      p {
+        margin: 7px 0;
+      }
+
+      ul,
+      ol {
+        margin: 7px 0 7px 20px;
+        padding: 0;
+      }
+
+      li {
+        margin: 3px 0;
+      }
+
+      table {
+        width: 100%;
+        margin: 10px 0 14px;
+        border-collapse: collapse;
+        table-layout: fixed;
+      }
+
+      th,
+      td {
+        padding: 8px 9px;
+        border: 1px solid #cbd8e6;
+        vertical-align: top;
+      }
+
+      th {
+        color: #0b1220;
+        background: #eef5fc;
+        font-weight: 700;
+      }
+
+      code,
+      kbd {
+        padding: 1px 5px;
+        border: 1px solid #cbd8e6;
+        border-radius: 4px;
+        background: #f4f7fb;
+        font-family: "Consolas", monospace;
+        font-size: 9pt;
+      }
+
+      .cover {
+        padding: 32px 28px;
+        border: 2px solid #1f6feb;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #eef7ff, #fff7e7);
+      }
+
+      .subtitle {
+        margin-top: 10px;
+        color: #42526a;
+        font-size: 13pt;
+      }
+
+      .meta {
+        margin-top: 24px;
+        color: #526173;
+      }
+
+      .note {
+        margin: 12px 0;
+        padding: 10px 12px;
+        border-left: 4px solid #1f6feb;
+        background: #f5f9ff;
+      }
+
+      .warning {
+        border-left-color: #f59e0b;
+        background: #fff8eb;
+      }
+
+      .page-break {
+        break-before: page;
+      }
+    </style>
+  </head>
+  <body>
+    <section class="cover">
+      <h1>real 3D car User Manual</h1>
+      <p class="subtitle">Three.js 3D racing game play guide</p>
+      <p class="meta">
+        Web game URL: <strong>https://real-3dcar.streamlit.app</strong><br />
+        Document version: 1.0<br />
+        Date: 2026-07-31
+      </p>
+    </section>
+
+    <h2>1. Game Overview</h2>
+    <p>
+      <strong>real 3D car</strong> is a 3D racing game where you avoid obstacles, manage speed, and build a high score.
+      You can select a difficulty before starting, steer around incoming obstacles, and earn extra points through the
+      multiplication mini-game during straight road sections.
+    </p>
+
+    <h2>2. How to Launch</h2>
+    <ol>
+      <li>Open the project folder: <code>C:\work\AI\LLM\codex\3dCar</code></li>
+      <li>Start the development server: <code>npm run dev</code></li>
+      <li>Open the Vite URL in your browser, usually <code>http://localhost:5173</code>.</li>
+      <li>For production output, run <code>npm run build</code>.</li>
+    </ol>
+
+    <h2>3. Start Screen</h2>
+    <p>Select a language and difficulty, then press <strong>Start Game</strong>.</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Label</th>
+          <th>Meaning</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>S</code></td>
+          <td>Straight road duration</td>
+        </tr>
+        <tr>
+          <td><code>C</code></td>
+          <td>Curved road duration</td>
+        </tr>
+        <tr>
+          <td><code>M</code></td>
+          <td>How long the mini-game panel is displayed</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>4. Difficulty Settings</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Difficulty</th>
+          <th>Obstacle Speed</th>
+          <th>Straight</th>
+          <th>Curve</th>
+          <th>Mini-game Display</th>
+          <th>Score Multiplier</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Beginner</td>
+          <td>18</td>
+          <td>20 sec</td>
+          <td>5 sec</td>
+          <td>5 sec</td>
+          <td>1.00x</td>
+        </tr>
+        <tr>
+          <td>Intermediate</td>
+          <td>26</td>
+          <td>20 sec</td>
+          <td>10 sec</td>
+          <td>10 sec</td>
+          <td>1.22x</td>
+        </tr>
+        <tr>
+          <td>Advanced</td>
+          <td>34</td>
+          <td>10 sec</td>
+          <td>10 sec</td>
+          <td>10 sec</td>
+          <td>1.48x</td>
+        </tr>
+        <tr>
+          <td>Pro</td>
+          <td>44</td>
+          <td>5 sec</td>
+          <td>20 sec</td>
+          <td>5 sec</td>
+          <td>1.82x</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>5. Controls</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Action</th>
+          <th>Keyboard</th>
+          <th>Mobile</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Move left</td>
+          <td><kbd>A</kbd> or <kbd>Left Arrow</kbd></td>
+          <td><strong>LEFT</strong> button</td>
+        </tr>
+        <tr>
+          <td>Move right</td>
+          <td><kbd>D</kbd> or <kbd>Right Arrow</kbd></td>
+          <td><strong>RIGHT</strong> button</td>
+        </tr>
+        <tr>
+          <td>Speed up</td>
+          <td><kbd>W</kbd> or <kbd>Up Arrow</kbd></td>
+          <td>Keyboard recommended</td>
+        </tr>
+        <tr>
+          <td>Slow down</td>
+          <td><kbd>S</kbd> or <kbd>Down Arrow</kbd></td>
+          <td>Keyboard recommended</td>
+        </tr>
+        <tr>
+          <td>Restart</td>
+          <td><kbd>R</kbd></td>
+          <td><strong>Restart Race</strong> button</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>6. Dashboard</h2>
+    <ul>
+      <li><strong>Speed</strong>: Current vehicle speed</li>
+      <li><strong>Score</strong>: Current score</li>
+      <li><strong>Distance</strong>: Distance traveled</li>
+      <li><strong>Best Score</strong>: Highest score saved in the browser</li>
+      <li><strong>Difficulty</strong>: Selected difficulty</li>
+      <li><strong>Obstacle Speed</strong>: Base obstacle speed and live speed input change</li>
+    </ul>
+
+    <h2 class="page-break">7. Scoring Rules</h2>
+    <ul>
+      <li>Driving score increases over time based on speed and difficulty.</li>
+      <li>Higher driving speed gives a higher score weight.</li>
+      <li>Higher difficulty gives a higher score multiplier.</li>
+      <li>Correct mini-game answer: <strong>+300 points</strong>.</li>
+      <li>Wrong answer or timeout: <strong>-300 points</strong>.</li>
+      <li>Score never drops below zero.</li>
+    </ul>
+
+    <h2>8. Multiplication Mini-game</h2>
+    <p>
+      During straight road sections, a multiplication mini-game panel appears on the right side of the screen.
+      Each question allows <strong>3 seconds</strong> for answer input.
+    </p>
+    <ul>
+      <li>Beginner and Intermediate: the mini-game appears 5 seconds after a straight section starts.</li>
+      <li>Advanced and Pro: the mini-game appears immediately when a straight section starts.</li>
+      <li>A fanfare plays when the mini-game starts.</li>
+      <li>Correct answers show <strong>Nice!</strong> with a bright sound.</li>
+      <li>Wrong answers or timeouts show <strong>Not good!</strong> with a short low sound.</li>
+    </ul>
+    <div class="note">
+      The difficulty <code>M</code> value controls how long the mini-game panel stays visible. It is separate from the
+      3-second answer timer.
+    </div>
+
+    <h2>9. Crash and Restart</h2>
+    <p>
+      If your car collides with an obstacle, the race stops and the crash screen appears. You can select a new difficulty
+      and press <strong>Restart Race</strong> to begin again.
+    </p>
+    <ul>
+      <li>Mini-game questions and timers are reset after a crash.</li>
+      <li>The selected difficulty is reflected in the dashboard.</li>
+      <li>Best score is saved in local browser storage.</li>
+    </ul>
+
+    <h2>10. Car Photo Upload</h2>
+    <p>
+      Use <strong>Upload Photo</strong> to place an image on the roof of the car. Use <strong>Clear</strong> to restore
+      the default placeholder.
+    </p>
+
+    <h2>11. Music and Sound Effects</h2>
+    <ul>
+      <li>Use <strong>BGM On/Off</strong> to toggle background music.</li>
+      <li>A crash sound plays on collision.</li>
+      <li>Mini-game start, correct answer, and wrong answer each have their own sound effect.</li>
+    </ul>
+
+    <h2>12. Troubleshooting</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Issue</th>
+          <th>What to Check</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Game screen is blank</td>
+          <td>Check that the development server is running, then refresh the browser.</td>
+        </tr>
+        <tr>
+          <td>Mobile steering buttons are missing</td>
+          <td>Clear browser cache and confirm the viewport is mobile sized.</td>
+        </tr>
+        <tr>
+          <td>No sound</td>
+          <td>Check browser tab mute, OS volume, and whether you clicked the page once to enable audio.</td>
+        </tr>
+        <tr>
+          <td>Mini-game does not appear</td>
+          <td>Confirm the road is in a straight section. Beginner and Intermediate wait 5 seconds before showing it.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="note warning">
+      This manual is based on the local project at <code>C:\work\AI\LLM\codex\3dCar</code>.
+    </div>
+  </body>
+</html>
