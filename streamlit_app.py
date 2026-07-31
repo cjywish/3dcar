@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import base64
 from pathlib import Path
 import re
 
@@ -9,6 +10,7 @@ import streamlit.components.v1 as components
 
 ROOT = Path(__file__).resolve().parent
 DIST_INDEX = ROOT / "dist" / "index.html"
+MANUAL_PDF = ROOT / "dist" / "real_3d_car_user_manual.pdf"
 
 
 def _inline_dist_page() -> str:
@@ -47,6 +49,13 @@ def _inline_dist_page() -> str:
 
     html = re.sub(r'<meta name="viewport"[^>]*>', '<meta name="viewport" content="width=device-width, initial-scale=1.0">', html)
     html = re.sub(r'<script type="module" crossorigin>', '<script type="module">', html)
+
+    if MANUAL_PDF.exists():
+        manual_data = base64.b64encode(MANUAL_PDF.read_bytes()).decode("ascii")
+        manual_href = f"data:application/pdf;base64,{manual_data}"
+        html = html.replace('href="./real_3d_car_user_manual.pdf"', f'href="{manual_href}"')
+        html = html.replace('href="/real_3d_car_user_manual.pdf"', f'href="{manual_href}"')
+
     return html
 
 
